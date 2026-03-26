@@ -58,6 +58,7 @@ Deploy:
 
 Cluster:
   monad cluster-status              Full cluster health overview
+  monad pulse                       Rich health dashboard with trends
   monad node-drain <node-id>        Drain a node
   monad node-eligibility <id> <on|off>  Toggle node eligibility
 
@@ -353,6 +354,133 @@ cmd_gh() {
     esac
 }
 
+# ─── Pulse dashboard ───────────────────────────────────────────────────────
+
+cmd_pulse() {
+    local LOG_DIR="$REPO_DIR/logs"
+    local W=60  # column width for section headers
+
+    # ── Header ──
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║               M O N A D   C L U S T E R                    ║"
+    echo "║                     $(date '+%Y-%m-%d %H:%M')                        ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo ""
+
+    # ── Nodes ──
+    echo "── Nodes ──────────────────────────────────────────────────────"
+    if nomad node status 2>/dev/null; then
+        echo ""
+    else
+        echo "  (cannot reach Nomad server)"
+        echo ""
+    fi
+
+    # ── Jobs ──
+    echo "── Jobs ───────────────────────────────────────────────────────"
+    if nomad status 2>/dev/null; then
+        echo ""
+    else
+        echo "  (cannot reach Nomad server)"
+        echo ""
+    fi
+
+    # ── Recent research sessions ──
+    echo "── Recent Math Sessions ───────────────────────────────────────"
+    local found_sessions=false
+    for job in math-researcher math-quick-compute math-reviewer; do
+        local latest
+        latest=$(nomad job status "$job" 2>/dev/null | grep -E '^\s*[a-f0-9]' | head -3)
+        if [ -n "$latest" ]; then
+            echo "  $job:"
+            echo "$latest" | while read -r line; do echo "    $line"; done
+            found_sessions=true
+        fi
+    done
+    if ! $found_sessions; then
+        echo "  (no recent sessions found)"
+    fi
+    echo ""
+
+    # ── GitOps sync state ──
+    echo "── GitOps ─────────────────────────────────────────────────────"
+    cd "$REPO_DIR"
+    local branch commit dirty
+    branch=$(git branch --show-current 2>/dev/null || echo "?")
+    commit=$(git log --oneline -1 2>/dev/null || echo "?")
+    dirty=$(git status --porcelain 2>/dev/null | wc -l)
+    echo "  Branch: $branch"
+    echo "  Latest: $commit"
+    echo "  Dirty:  $dirty files"
+
+    local state_file="$REPO_DIR/.sync-state"
+    if [ -f "$state_file" ]; then
+        local tracked
+        tracked=$(wc -l < "$state_file")
+        echo "  Sync:   tracking $tracked jobs (drift detection active)"
+    else
+        echo "  Sync:   no state file (first sync pending)"
+    fi
+    echo ""
+
+    # ── Node doctor reports ──
+    echo "── Doctor Reports (last 7 days) ─────────────────────────────"
+    local report_count=0
+    if [ -d "$LOG_DIR" ]; then
+        while IFS= read -r report; do
+            [ -z "$report" ] && continue
+            local rname
+            rname=$(basename "$report" .md)
+            local status_line
+            status_line=$(grep -m1 '^\*\*Status:' "$report" 2>/dev/null || echo "unknown")
+            echo "  $rname: $status_line"
+            report_count=$((report_count + 1))
+        done < <(find "$LOG_DIR" -name "doctor-*.md" -mtime -7 -type f 2>/dev/null | sort -r | head -10)
+    fi
+    if [ "$report_count" -eq 0 ]; then
+        echo "  (no reports — all nodes healthy or doctor not running)"
+    fi
+    echo ""
+
+    # ── Trend predictions ──
+    echo "── Predictions ────────────────────────────────────────────────"
+    local prediction_count=0
+    if [ -d "$LOG_DIR" ]; then
+        for mfile in "$LOG_DIR"/metrics-*.csv; do
+            [ -f "$mfile" ] || continue
+            local node
+            node=$(basename "$mfile" .csv | sed 's/metrics-//')
+            # Check last disk reading
+            local last_disk
+            last_disk=$(grep ",disk_pct," "$mfile" 2>/dev/null | tail -1 | cut -d',' -f3)
+            if [ -n "$last_disk" ] && [ "$last_disk" -gt 75 ] 2>/dev/null; then
+                echo "  $node: disk at ${last_disk}%"
+                prediction_count=$((prediction_count + 1))
+            fi
+        done
+    fi
+    if [ "$prediction_count" -eq 0 ]; then
+        echo "  (no concerning trends detected)"
+    fi
+    echo ""
+
+    # ── Open issues ──
+    echo "── Open Issues ────────────────────────────────────────────────"
+    if command -v gh &>/dev/null; then
+        local issues
+        issues=$(gh issue list --repo claude-monad/monad --limit 5 --state open 2>/dev/null)
+        if [ -n "$issues" ]; then
+            echo "$issues" | while read -r line; do echo "  $line"; done
+        else
+            echo "  (no open issues)"
+        fi
+    else
+        echo "  (gh not available)"
+    fi
+    echo ""
+}
+
 # ─── Main dispatch ──────────────────────────────────────────────────────────
 
 main() {
@@ -366,6 +494,7 @@ main() {
         sync)             cmd_sync ;;
         validate)         cmd_validate "$@" ;;
         cluster-status)   cmd_cluster_status ;;
+        pulse)            cmd_pulse ;;
         node-drain)       cmd_node_drain "$@" ;;
         node-eligibility) cmd_node_eligibility "$@" ;;
         gh)               cmd_gh "$@" ;;
