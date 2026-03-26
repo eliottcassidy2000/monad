@@ -41,7 +41,8 @@ def get_auth_status():
     try:
         result = subprocess.run(
             ["claude", "auth", "status"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=10,
+            env={**os.environ, "HOME": os.environ.get("HOME", "/root")}
         )
         if result.returncode == 0:
             data = json.loads(result.stdout.strip())
@@ -76,7 +77,8 @@ def do_logout():
     try:
         result = subprocess.run(
             ["claude", "auth", "logout"],
-            capture_output=True, text=True, timeout=10
+            capture_output=True, text=True, timeout=10,
+            env={**os.environ, "HOME": os.environ.get("HOME", "/root")}
         )
         return {"ok": result.returncode == 0, "output": result.stdout + result.stderr}
     except Exception as e:
