@@ -74,6 +74,13 @@ Secrets:
   monad secrets generate <path> <key> [length]  Generate and store a random secret
   monad secrets init-minio          Auto-generate and store MinIO credentials
 
+Memory (shared cluster state):
+  monad memory get <key>            Read a value from cluster memory
+  monad memory set <key> <val> [ttl] Write a value (optional TTL in days)
+  monad memory list [prefix]        List keys (optional prefix filter)
+  monad memory gc                   Garbage-collect expired entries
+  monad memory dump                 Print full cluster memory as JSON
+
 Events:
   monad events [n]                  Show last n cluster events (default 20)
 
@@ -626,6 +633,19 @@ cmd_pulse() {
     fi
     echo ""
 
+    # ── Cluster memory ──
+    echo "── Cluster Memory ─────────────────────────────────────────────"
+    local mem_file="$REPO_DIR/cluster-memory.json"
+    if [ -f "$mem_file" ]; then
+        local key_count
+        key_count=$(python3 -c "import json; print(len(json.load(open('$mem_file'))))" 2>/dev/null || echo "?")
+        echo "  $key_count entries stored"
+        "$REPO_DIR/scripts/cluster-memory.sh" list 2>/dev/null | head -5
+    else
+        echo "  (no cluster memory yet)"
+    fi
+    echo ""
+
     # ── Recent events ──
     echo "── Recent Events ──────────────────────────────────────────────"
     if [ -f "$EVENTS_FILE" ]; then
@@ -675,6 +695,7 @@ main() {
         node-drain)       cmd_node_drain "$@" ;;
         node-eligibility) cmd_node_eligibility "$@" ;;
         doctor)           cmd_doctor "$@" ;;
+        memory)           "$REPO_DIR/scripts/cluster-memory.sh" "$@" ;;
         secrets)          cmd_secrets "$@" ;;
         events)           cmd_events "$@" ;;
         gh)               cmd_gh "$@" ;;
