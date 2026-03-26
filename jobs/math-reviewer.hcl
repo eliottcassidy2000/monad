@@ -22,54 +22,8 @@ job "math-reviewer" {
 
       config {
         command = "/bin/bash"
-        args    = ["-c", <<EOT
-set -euo pipefail
-
-WORK_DIR="/tmp/math-review-$$"
-trap "rm -rf $WORK_DIR" EXIT
-
-mkdir -p "$WORK_DIR"
-cd "$WORK_DIR"
-
-MATH_REPO="${MATH_REPO_URL:-https://github.com/eliottcassidy2000/math.git}"
-git clone "$MATH_REPO" math
-cd math
-
-echo "monad-reviewer" > .machine-id
-
-# Claude Code uses the locally authenticated account — no API key needed
-claude --print --dangerously-skip-permissions \
-  "You are monad-reviewer, the quality control agent in the Monad cluster.
-   You are the skeptic. Your job is to VERIFY, CHALLENGE, and SYNTHESIZE.
-
-   Full startup sequence (you need the complete picture):
-   1. Read 01-canon/MISTAKES.md — you are the guardian of this file
-   2. Read 01-canon/definitions.md — ensure all usage is consistent
-   3. Read 00-navigation/OPEN-QUESTIONS.md
-   4. Read 00-navigation/SESSION-LOG.md — FULL file, not just recent entries
-   5. Read 00-navigation/TANGENTS.md
-   6. git log --oneline -20 (see what happened in the last day)
-   7. python3 agents/processor.py --check
-
-   YOUR TASKS:
-   1. VERIFY: For each new result in 05-knowledge/results/ from the last 24 hours:
-      - Re-derive the key step from definitions
-      - Check against MISTAKES.md for known pitfalls
-      - If something looks wrong, OPEN A COURT CASE in 02-court/active/
-      - If correct, note verification in the result file
-   2. SYNTHESIZE: Write a daily digest entry in SESSION-LOG.md summarizing:
-      - What was computed, proved, or discovered
-      - What failed or was refuted
-      - Key open threads for tomorrow
-   3. REPRIORITIZE: Update OPEN-QUESTIONS.md based on new results
-   4. COORDINATE: Send messages via agents/processor.py to guide the other agents
-   5. CLEAN: Check for stale hypotheses, duplicate results, inconsistencies
-
-   Use agents/finish_session.py to close.
-   Be rigorous. The court system exists for a reason. Use it."
-
-EOT
-        ]
+        # Full clone (depth 0) — reviewer needs complete history
+        args    = ["-c", "exec ${MONAD_REPO_DIR:-/home/${USER:-bigo}/monad}/scripts/math-session.sh reviewer 0"]
       }
 
       env {
