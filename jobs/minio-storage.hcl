@@ -77,6 +77,11 @@ EOT
         port     = "console"
         provider = "nomad"
 
+        tags = [
+          "traefik.enable=true",
+          "traefik.http.routers.minio.rule=PathPrefix(`/minio`)",
+        ]
+
         check {
           type     = "http"
           path     = "/"

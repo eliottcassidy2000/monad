@@ -15,6 +15,11 @@ job "whoami" {
       name     = "whoami"
       port     = "http"
       provider = "nomad"
+
+      tags = [
+        "traefik.enable=true",
+        "traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)",
+      ]
     }
 
     task "whoami" {
