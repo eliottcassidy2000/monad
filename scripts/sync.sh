@@ -18,6 +18,15 @@ CANARY_WAIT="${SYNC_CANARY_WAIT:-30}"  # seconds to wait for health check
 
 log() { echo "[monad-sync $(date '+%H:%M:%S')] $*"; }
 
+EVENTS_FILE="$REPO_DIR/logs/events.jsonl"
+emit_event() {
+    local source="$1" action="$2" result="$3" detail="${4:-}"
+    mkdir -p "$(dirname "$EVENTS_FILE")"
+    printf '{"ts":"%s","node":"%s","source":"%s","action":"%s","result":"%s","detail":"%s"}\n' \
+        "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(hostname)" "$source" "$action" "$result" "$detail" \
+        >> "$EVENTS_FILE"
+}
+
 # ─── Pull latest ──────────────────────────────────────────────────────────────
 
 cd "$REPO_DIR"
@@ -109,8 +118,10 @@ for job_name in "${CHANGED[@]}"; do
 
             if [ "$alloc_status" = "running" ]; then
                 log "  ✓ $job_name canary passed (alloc: running)"
+                emit_event "sync" "canary-pass" "ok" "$job_name"
             else
                 log "  ✗ $job_name canary FAILED (alloc: $alloc_status)"
+                emit_event "sync" "canary-fail" "fail" "$job_name ($alloc_status)"
                 ERRORS+=("$job_name: canary failed ($alloc_status)")
 
                 # Attempt rollback if we have a previous version
@@ -119,6 +130,7 @@ for job_name in "${CHANGED[@]}"; do
                     rollback_file="/tmp/monad-rollback-${job_name}.hcl"
                     echo "$prev_version" > "$rollback_file"
                     if nomad job run "$rollback_file" 2>&1; then
+                        emit_event "sync" "rollback" "rollback" "$job_name"
                         log "  ✓ Rollback applied for $job_name"
                         # Restore previous hash so next sync retries
                         current_hashes["$job_name"]="${prev_hashes[$job_name]}"
