@@ -25,3 +25,4 @@ scripts/     - Automation (sync, node setup)
 |------|------|-------------|
 | bigo-server | server+client | 100.78.218.70 |
 | bigo-server-oracle | client | 100.119.217.63 |
+| V1410-1 | client | 100.75.75.39 |
