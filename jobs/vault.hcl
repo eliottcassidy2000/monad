@@ -45,7 +45,6 @@ job "vault" {
         ports   = ["vault"]
         command = "vault"
         args    = ["server", "-config=/local/vault-config.hcl"]
-        # disable_mlock set in config; IPC_LOCK not needed
       }
 
       volume_mount {
@@ -101,9 +100,9 @@ EOT
       }
     }
 
-    # ── Init + unseal (runs once after vault starts) ──────────────────
+    # ── Init + unseal (raw_exec using curl against Vault HTTP API) ────
     task "init" {
-      driver = "docker"
+      driver = "raw_exec"
 
       lifecycle {
         hook    = "poststart"
@@ -111,105 +110,85 @@ EOT
       }
 
       config {
-        image        = "hashicorp/vault:1.15"
-        network_mode = "host"
-        command      = "/bin/sh"
-        args         = ["/local/init.sh"]
-      }
-
-      volume_mount {
-        volume      = "vault-data"
-        destination = "/vault/file"
-        read_only   = false
-      }
-
-      template {
-        data        = "VAULT_ADDR=http://{{ env \"NOMAD_HOST_IP_vault\" }}:{{ env \"NOMAD_HOST_PORT_vault\" }}"
-        destination = "local/vault.env"
-        env         = true
+        command = "/bin/bash"
+        args    = ["local/init.sh"]
       }
 
       template {
         data = <<-SCRIPT
-#!/bin/sh
+#!/bin/bash
 set -e
-KEYS_FILE="/vault/file/.vault-keys.json"
+VAULT_ADDR="http://{{ env "NOMAD_HOST_IP_vault" }}:{{ env "NOMAD_HOST_PORT_vault" }}"
+KEYS_FILE="/opt/vault/data/.vault-keys.json"
 
 echo "[vault-init] VAULT_ADDR=$VAULT_ADDR"
 echo "[vault-init] Waiting for Vault API..."
 for i in $(seq 1 60); do
-  if vault status -format=json >/dev/null 2>&1; then
+  if curl -sf "$VAULT_ADDR/v1/sys/health?sealedcode=200&uninitcode=200" >/dev/null 2>&1; then
     echo "[vault-init] Vault reachable after ${i}s"
     break
   fi
   sleep 1
 done
 
-STATUS=$(vault status -format=json 2>/dev/null) || { echo "[vault-init] Vault unreachable after 60s"; exit 1; }
-INITIALIZED=$(echo "$STATUS" | sed -n 's/.*"initialized": *\(true\|false\).*/\1/p')
-SEALED=$(echo "$STATUS" | sed -n 's/.*"sealed": *\(true\|false\).*/\1/p')
+HEALTH=$(curl -sf "$VAULT_ADDR/v1/sys/health?sealedcode=200&uninitcode=200" 2>/dev/null) || {
+  echo "[vault-init] Vault unreachable after 60s"; exit 1
+}
+
+INITIALIZED=$(echo "$HEALTH" | python3 -c "import sys,json; print(json.load(sys.stdin)['initialized'])")
+SEALED=$(echo "$HEALTH" | python3 -c "import sys,json; print(json.load(sys.stdin)['sealed'])")
 
 echo "[vault-init] initialized=$INITIALIZED sealed=$SEALED"
 
 # Initialize if fresh
-if [ "$INITIALIZED" = "false" ]; then
+if [ "$INITIALIZED" = "False" ]; then
   echo "[vault-init] Initializing (1 key share, 1 threshold)..."
-  vault operator init -key-shares=1 -key-threshold=1 -format=json > "$KEYS_FILE"
+  INIT_RESP=$(curl -sf -X PUT "$VAULT_ADDR/v1/sys/init" \
+    -H "Content-Type: application/json" \
+    -d '{"secret_shares":1,"secret_threshold":1}')
+  echo "$INIT_RESP" > "$KEYS_FILE"
   chmod 600 "$KEYS_FILE"
   echo "[vault-init] Keys written to $KEYS_FILE"
-  SEALED="true"
+  SEALED="True"
 fi
 
 # Unseal if needed
-if [ "$SEALED" = "true" ]; then
+if [ "$SEALED" = "True" ]; then
   if [ ! -f "$KEYS_FILE" ]; then
-    echo "[vault-init] ERROR: sealed but no keys file at $KEYS_FILE"
-    exit 1
+    echo "[vault-init] ERROR: sealed but no keys file"; exit 1
   fi
-  UNSEAL_KEY=$(sed -n 's/.*"unseal_keys_b64":\["\([^"]*\)".*/\1/p' "$KEYS_FILE")
+  UNSEAL_KEY=$(python3 -c "import json; print(json.load(open('$KEYS_FILE'))['keys_base64'][0])")
   echo "[vault-init] Unsealing..."
-  vault operator unseal "$UNSEAL_KEY"
+  curl -sf -X PUT "$VAULT_ADDR/v1/sys/unseal" \
+    -H "Content-Type: application/json" \
+    -d "{\"key\":\"$UNSEAL_KEY\"}" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'  sealed={d[\"sealed\"]}')"
 fi
 
-# Authenticate with root token
-ROOT_TOKEN=$(sed -n 's/.*"root_token":"\([^"]*\)".*/\1/p' "$KEYS_FILE")
-export VAULT_TOKEN="$ROOT_TOKEN"
+# Get root token
+ROOT_TOKEN=$(python3 -c "import json; print(json.load(open('$KEYS_FILE'))['root_token'])")
 
-# Enable KV v2 at secret/
-if ! vault secrets list -format=json 2>/dev/null | grep -q '"secret/"'; then
+# Enable KV v2 at secret/ if not already
+MOUNTS=$(curl -sf -H "X-Vault-Token: $ROOT_TOKEN" "$VAULT_ADDR/v1/sys/mounts" 2>/dev/null || echo '{}')
+if ! echo "$MOUNTS" | python3 -c "import sys,json; d=json.load(sys.stdin); exit(0 if 'secret/' in d else 1)" 2>/dev/null; then
   echo "[vault-init] Enabling KV v2 at secret/..."
-  vault secrets enable -version=2 -path=secret kv
+  curl -sf -X POST "$VAULT_ADDR/v1/sys/mounts/secret" \
+    -H "X-Vault-Token: $ROOT_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"type":"kv","options":{"version":"2"}}'
 fi
 
-# Write worker policy (read tokens, revoke own token)
+# Write worker policy
 echo "[vault-init] Writing policies..."
-vault policy write monad-worker - <<'POLICY'
-path "secret/data/claude-tokens/*" {
-  capabilities = ["read"]
-}
-path "auth/token/revoke-self" {
-  capabilities = ["update"]
-}
-POLICY
+curl -sf -X PUT "$VAULT_ADDR/v1/sys/policies/acl/monad-worker" \
+  -H "X-Vault-Token: $ROOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"policy":"path \"secret/data/claude-tokens/*\" { capabilities = [\"read\"] }\npath \"auth/token/revoke-self\" { capabilities = [\"update\"] }"}'
 
-# Write dispatcher policy (list/read tokens, create child tokens)
-vault policy write monad-dispatcher - <<'POLICY'
-path "secret/data/claude-tokens/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/metadata/claude-tokens/*" {
-  capabilities = ["read", "list"]
-}
-path "secret/data/claude-tokens" {
-  capabilities = ["read", "list"]
-}
-path "secret/metadata/claude-tokens" {
-  capabilities = ["read", "list"]
-}
-path "auth/token/create" {
-  capabilities = ["create", "update"]
-}
-POLICY
+# Write dispatcher policy
+curl -sf -X PUT "$VAULT_ADDR/v1/sys/policies/acl/monad-dispatcher" \
+  -H "X-Vault-Token: $ROOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"policy":"path \"secret/data/claude-tokens/*\" { capabilities = [\"read\", \"list\"] }\npath \"secret/metadata/claude-tokens/*\" { capabilities = [\"read\", \"list\"] }\npath \"secret/data/claude-tokens\" { capabilities = [\"read\", \"list\"] }\npath \"secret/metadata/claude-tokens\" { capabilities = [\"read\", \"list\"] }\npath \"auth/token/create\" { capabilities = [\"create\", \"update\"] }"}'
 
 echo "[vault-init] Setup complete. Vault is ready."
 SCRIPT
@@ -222,9 +201,9 @@ SCRIPT
       }
     }
 
-    # ── Unsealer sidecar (auto-unseal on restart/reschedule) ──────────
+    # ── Unsealer sidecar (raw_exec, checks every 15s) ────────────────
     task "unsealer" {
-      driver = "docker"
+      driver = "raw_exec"
 
       lifecycle {
         hook    = "poststart"
@@ -232,40 +211,29 @@ SCRIPT
       }
 
       config {
-        image        = "hashicorp/vault:1.15"
-        network_mode = "host"
-        command      = "/bin/sh"
-        args         = ["/local/unsealer.sh"]
-      }
-
-      volume_mount {
-        volume      = "vault-data"
-        destination = "/vault/file"
-        read_only   = true
-      }
-
-      template {
-        data        = "VAULT_ADDR=http://{{ env \"NOMAD_HOST_IP_vault\" }}:{{ env \"NOMAD_HOST_PORT_vault\" }}"
-        destination = "local/vault-unsealer.env"
-        env         = true
+        command = "/bin/bash"
+        args    = ["local/unsealer.sh"]
       }
 
       template {
         data = <<-SCRIPT
-#!/bin/sh
-KEYS_FILE="/vault/file/.vault-keys.json"
+#!/bin/bash
+VAULT_ADDR="http://{{ env "NOMAD_HOST_IP_vault" }}:{{ env "NOMAD_HOST_PORT_vault" }}"
+KEYS_FILE="/opt/vault/data/.vault-keys.json"
 echo "[vault-unsealer] Seal monitor started (15s interval, addr=$VAULT_ADDR)"
 
 while true; do
   sleep 15
-  STATUS=$(vault status -format=json 2>/dev/null) || continue
-  SEALED=$(echo "$STATUS" | sed -n 's/.*"sealed": *\(true\|false\).*/\1/p')
+  HEALTH=$(curl -sf "$VAULT_ADDR/v1/sys/health?sealedcode=200&uninitcode=200" 2>/dev/null) || continue
+  SEALED=$(echo "$HEALTH" | python3 -c "import sys,json; print(json.load(sys.stdin)['sealed'])" 2>/dev/null) || continue
 
-  if [ "$SEALED" = "true" ]; then
+  if [ "$SEALED" = "True" ]; then
     [ ! -f "$KEYS_FILE" ] && { echo "[vault-unsealer] No keys file"; continue; }
-    UNSEAL_KEY=$(sed -n 's/.*"unseal_keys_b64":\["\([^"]*\)".*/\1/p' "$KEYS_FILE")
+    UNSEAL_KEY=$(python3 -c "import json; print(json.load(open('$KEYS_FILE'))['keys_base64'][0])")
     echo "[vault-unsealer] Detected seal — unsealing..."
-    vault operator unseal "$UNSEAL_KEY" >/dev/null 2>&1 && echo "[vault-unsealer] Unsealed."
+    curl -sf -X PUT "$VAULT_ADDR/v1/sys/unseal" \
+      -H "Content-Type: application/json" \
+      -d "{\"key\":\"$UNSEAL_KEY\"}" >/dev/null 2>&1 && echo "[vault-unsealer] Unsealed."
   fi
 done
 SCRIPT
