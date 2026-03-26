@@ -1,0 +1,369 @@
+#!/usr/bin/env bash
+# monad — standardized CLI for all cluster operations.
+# All Claude agents MUST use this instead of raw git/nomad/gh commands.
+set -euo pipefail
+
+REPO_DIR="/home/bigo/Documents/monad"
+NOMAD_ADDR="http://100.78.218.70:4646"
+export NOMAD_ADDR
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+log()  { echo -e "${CYAN}[monad]${NC} $*"; }
+ok()   { echo -e "${GREEN}[monad]${NC} $*"; }
+warn() { echo -e "${YELLOW}[monad]${NC} $*"; }
+err()  { echo -e "${RED}[monad]${NC} $*" >&2; }
+
+usage() {
+    cat <<'USAGE'
+monad — cluster management CLI
+
+Git:
+  monad git pull                    Pull latest from origin/main
+  monad git status                  Show working tree status
+  monad git diff                    Show unstaged changes
+  monad git commit <message>        Stage all, commit with standard format
+  monad git push                    Push main to origin
+  monad git sync                    Pull, commit if dirty, push
+
+Nomad:
+  monad nomad status                List all jobs
+  monad nomad nodes                 List all nodes
+  monad nomad servers               List server members
+  monad nomad job-status <job>      Show job details
+  monad nomad alloc-logs <alloc>    Show allocation logs
+  monad nomad alloc-status <alloc>  Show allocation details
+
+Deploy:
+  monad deploy <job.hcl>            Deploy a job file (run + commit + push)
+  monad undeploy <job-name>         Remove a job (delete file + commit + push)
+  monad sync                        Force an immediate GitOps sync
+  monad validate <job.hcl>          Validate a job file without deploying
+
+Cluster:
+  monad cluster-status              Full cluster health overview
+  monad node-drain <node-id>        Drain a node
+  monad node-eligibility <id> <on|off>  Toggle node eligibility
+
+GitHub:
+  monad gh issue <title> [body]     Create a GitHub issue
+  monad gh pr <title> [body]        Create a PR from current branch
+  monad gh issues                   List open issues
+USAGE
+}
+
+# ─── Git commands ───────────────────────────────────────────────────────────
+
+cmd_git() {
+    local subcmd="${1:-}"; shift || true
+    cd "$REPO_DIR"
+
+    case "$subcmd" in
+        pull)
+            log "Pulling latest from origin/main..."
+            git fetch origin main --quiet
+            local local_rev remote_rev
+            local_rev=$(git rev-parse HEAD)
+            remote_rev=$(git rev-parse origin/main)
+            if [ "$local_rev" = "$remote_rev" ]; then
+                ok "Already up to date ($local_rev)"
+            else
+                git merge origin/main --ff-only --quiet
+                ok "Updated: $(git rev-parse --short HEAD)"
+            fi
+            ;;
+        status)
+            git status --short --branch
+            ;;
+        diff)
+            git diff
+            ;;
+        commit)
+            local msg="${1:-}"
+            if [ -z "$msg" ]; then
+                err "Usage: monad git commit <message>"
+                return 1
+            fi
+            git add -A
+            if git diff --cached --quiet; then
+                warn "Nothing to commit"
+                return 0
+            fi
+            git commit -m "$(cat <<EOF
+${msg}
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+            ok "Committed: $(git log --oneline -1)"
+            ;;
+        push)
+            log "Pushing to origin/main..."
+            git push origin main --quiet
+            ok "Pushed: $(git rev-parse --short HEAD)"
+            ;;
+        sync)
+            cmd_git pull
+            git add -A
+            if ! git diff --cached --quiet; then
+                local auto_msg="sync: $(git diff --cached --stat | tail -1 | xargs)"
+                git commit -m "$(cat <<EOF
+${auto_msg}
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+                ok "Auto-committed: $(git log --oneline -1)"
+            fi
+            cmd_git push
+            ;;
+        *)
+            err "Unknown git subcommand: $subcmd"
+            echo "Available: pull, status, diff, commit, push, sync"
+            return 1
+            ;;
+    esac
+}
+
+# ─── Nomad commands ─────────────────────────────────────────────────────────
+
+cmd_nomad() {
+    local subcmd="${1:-}"; shift || true
+
+    case "$subcmd" in
+        status)
+            nomad status
+            ;;
+        nodes)
+            nomad node status
+            ;;
+        servers)
+            nomad server members
+            ;;
+        job-status)
+            local job="${1:-}"
+            [ -z "$job" ] && { err "Usage: monad nomad job-status <job>"; return 1; }
+            nomad job status "$job"
+            ;;
+        alloc-logs)
+            local alloc="${1:-}"
+            [ -z "$alloc" ] && { err "Usage: monad nomad alloc-logs <alloc-id>"; return 1; }
+            nomad alloc logs "$alloc"
+            echo "=== STDERR ==="
+            nomad alloc logs -stderr "$alloc"
+            ;;
+        alloc-status)
+            local alloc="${1:-}"
+            [ -z "$alloc" ] && { err "Usage: monad nomad alloc-status <alloc-id>"; return 1; }
+            nomad alloc status "$alloc"
+            ;;
+        *)
+            err "Unknown nomad subcommand: $subcmd"
+            echo "Available: status, nodes, servers, job-status, alloc-logs, alloc-status"
+            return 1
+            ;;
+    esac
+}
+
+# ─── Deploy commands ────────────────────────────────────────────────────────
+
+cmd_deploy() {
+    local job_file="${1:-}"
+    if [ -z "$job_file" ]; then
+        err "Usage: monad deploy <path-to-job.hcl>"
+        return 1
+    fi
+
+    # Resolve to absolute path if relative
+    if [[ "$job_file" != /* ]]; then
+        job_file="$(pwd)/$job_file"
+    fi
+
+    if [ ! -f "$job_file" ]; then
+        err "File not found: $job_file"
+        return 1
+    fi
+
+    # Validate first
+    log "Validating $job_file..."
+    if ! nomad job validate "$job_file"; then
+        err "Validation failed"
+        return 1
+    fi
+
+    # If file is not already in jobs/, copy it there
+    local basename
+    basename=$(basename "$job_file")
+    local target="$REPO_DIR/jobs/$basename"
+    if [ "$job_file" != "$target" ]; then
+        cp "$job_file" "$target"
+        log "Copied to jobs/$basename"
+    fi
+
+    # Plan to show what will change
+    log "Planning..."
+    nomad job plan "$target" || true  # plan returns non-zero if there are changes
+
+    # Apply
+    log "Deploying..."
+    nomad job run "$target"
+
+    # Commit and push
+    local job_name
+    job_name=$(grep -m1 '^job\s' "$target" | sed 's/job\s*"\([^"]*\)".*/\1/')
+    cd "$REPO_DIR"
+    git add "jobs/$basename"
+    if ! git diff --cached --quiet; then
+        git commit -m "$(cat <<EOF
+deploy: ${job_name}
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+        git push origin main --quiet
+        ok "Deployed and pushed: $job_name"
+    else
+        ok "Deployed: $job_name (no git changes)"
+    fi
+}
+
+cmd_undeploy() {
+    local job_name="${1:-}"
+    if [ -z "$job_name" ]; then
+        err "Usage: monad undeploy <job-name>"
+        return 1
+    fi
+
+    # Stop the job in Nomad
+    log "Stopping job: $job_name..."
+    nomad job stop "$job_name" || warn "Job may not be running"
+
+    # Remove the file
+    local job_file="$REPO_DIR/jobs/${job_name}.hcl"
+    if [ -f "$job_file" ]; then
+        rm "$job_file"
+        cd "$REPO_DIR"
+        git add "jobs/${job_name}.hcl"
+        git commit -m "$(cat <<EOF
+undeploy: ${job_name}
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+        git push origin main --quiet
+        ok "Undeployed and pushed: $job_name"
+    else
+        warn "No file found at jobs/${job_name}.hcl (job stopped but no git change)"
+    fi
+}
+
+cmd_sync() {
+    log "Running immediate sync..."
+    "$REPO_DIR/scripts/sync.sh"
+}
+
+cmd_validate() {
+    local job_file="${1:-}"
+    [ -z "$job_file" ] && { err "Usage: monad validate <job.hcl>"; return 1; }
+    nomad job validate "$job_file"
+}
+
+# ─── Cluster commands ───────────────────────────────────────────────────────
+
+cmd_cluster_status() {
+    echo "═══ Monad Cluster Status ═══"
+    echo ""
+    echo "── Servers ──"
+    nomad server members
+    echo ""
+    echo "── Nodes ──"
+    nomad node status
+    echo ""
+    echo "── Jobs ──"
+    nomad status 2>/dev/null || echo "No running jobs"
+    echo ""
+    echo "── Git ──"
+    cd "$REPO_DIR"
+    echo "Branch: $(git branch --show-current)"
+    echo "Commit: $(git log --oneline -1)"
+    echo "Status: $(git status --short | wc -l) uncommitted changes"
+}
+
+cmd_node_drain() {
+    local node_id="${1:-}"
+    [ -z "$node_id" ] && { err "Usage: monad node-drain <node-id>"; return 1; }
+    log "Draining node $node_id..."
+    nomad node drain -enable "$node_id"
+}
+
+cmd_node_eligibility() {
+    local node_id="${1:-}"
+    local toggle="${2:-}"
+    [ -z "$node_id" ] || [ -z "$toggle" ] && { err "Usage: monad node-eligibility <node-id> <on|off>"; return 1; }
+    case "$toggle" in
+        on)  nomad node eligibility -enable "$node_id" ;;
+        off) nomad node eligibility -disable "$node_id" ;;
+        *)   err "Use 'on' or 'off'"; return 1 ;;
+    esac
+}
+
+# ─── GitHub commands ────────────────────────────────────────────────────────
+
+cmd_gh() {
+    local subcmd="${1:-}"; shift || true
+    cd "$REPO_DIR"
+
+    case "$subcmd" in
+        issue)
+            local title="${1:-}"
+            local body="${2:-}"
+            [ -z "$title" ] && { err "Usage: monad gh issue <title> [body]"; return 1; }
+            gh issue create --title "$title" --body "${body:-}" --repo claude-monad/monad
+            ;;
+        pr)
+            local title="${1:-}"
+            local body="${2:-}"
+            [ -z "$title" ] && { err "Usage: monad gh pr <title> [body]"; return 1; }
+            gh pr create --title "$title" --body "${body:-}" --repo claude-monad/monad
+            ;;
+        issues)
+            gh issue list --repo claude-monad/monad
+            ;;
+        *)
+            err "Unknown gh subcommand: $subcmd"
+            echo "Available: issue, pr, issues"
+            return 1
+            ;;
+    esac
+}
+
+# ─── Main dispatch ──────────────────────────────────────────────────────────
+
+main() {
+    local cmd="${1:-}"; shift || true
+
+    case "$cmd" in
+        git)              cmd_git "$@" ;;
+        nomad)            cmd_nomad "$@" ;;
+        deploy)           cmd_deploy "$@" ;;
+        undeploy)         cmd_undeploy "$@" ;;
+        sync)             cmd_sync ;;
+        validate)         cmd_validate "$@" ;;
+        cluster-status)   cmd_cluster_status ;;
+        node-drain)       cmd_node_drain "$@" ;;
+        node-eligibility) cmd_node_eligibility "$@" ;;
+        gh)               cmd_gh "$@" ;;
+        help|--help|-h|"")usage ;;
+        *)
+            err "Unknown command: $cmd"
+            usage
+            return 1
+            ;;
+    esac
+}
+
+main "$@"
