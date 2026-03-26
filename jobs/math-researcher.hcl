@@ -8,6 +8,12 @@ job "math-researcher" {
     time_zone        = "America/Denver"
   }
 
+  # Constrain to the node where Max account 1 is logged in
+  constraint {
+    attribute = "${meta.claude_account}"
+    value     = "max-1"
+  }
+
   group "researcher" {
     count = 1
 
@@ -20,23 +26,10 @@ job "math-researcher" {
 set -euo pipefail
 
 WORK_DIR="/tmp/math-research-$$"
-MONAD_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
 trap "rm -rf $WORK_DIR" EXIT
 
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
-
-# Select API key via key-ring (dedicated strategy: uses MAX_KEY_1)
-if [ -f "$MONAD_DIR/scripts/key-ring.sh" ]; then
-    eval $("$MONAD_DIR/scripts/key-ring.sh" research 2>/dev/null) || true
-fi
-
-# Fall back to directly-provided key
-export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
-if [ -z "$ANTHROPIC_API_KEY" ]; then
-    echo "ERROR: No API key available. Set via key-ring or ANTHROPIC_API_KEY env."
-    exit 1
-fi
 
 # Clone the math repo fresh each session
 MATH_REPO="${MATH_REPO_URL:-https://github.com/eliottcassidy2000/math.git}"
@@ -44,17 +37,13 @@ git clone --depth=100 "$MATH_REPO" math
 cd math
 
 # Register as a Monad cluster agent if not already registered
-MACHINE_ID="monad-researcher"
-if [ ! -f .machine-id ] || [ "$(cat .machine-id)" != "$MACHINE_ID" ]; then
-    echo "$MACHINE_ID" > .machine-id
-    if [ -f agents/processor.py ]; then
-        python3 agents/processor.py --register 2>/dev/null || true
-    fi
+echo "monad-researcher" > .machine-id
+if [ -f agents/processor.py ]; then
+    python3 agents/processor.py --register 2>/dev/null || true
 fi
 
 # Day-of-week rotation: systematic coverage of the research frontier
 DAY=$(date +%u)
-HOUR=$(date +%H)
 case $DAY in
   1) FOCUS="Pick the highest-priority red open question from 00-navigation/OPEN-QUESTIONS.md and attempt a proof or significant partial result" ;;
   2) FOCUS="Run computation scripts from 04-computation/ — extend known OEIS sequences, verify conjectures with new data, save ALL outputs via ./run_and_save.sh" ;;
@@ -65,7 +54,7 @@ case $DAY in
   7) FOCUS="Free exploration: read CONCEPT-MAP.md and INVESTIGATION-BACKLOG.md, investigate whatever seems most promising, follow your curiosity" ;;
 esac
 
-# The session prompt follows the math repo's CLAUDE.md protocol exactly
+# Claude Code uses the locally authenticated account — no API key needed
 claude --print --dangerously-skip-permissions \
   "You are monad-researcher, a Claude research agent in the Monad compute cluster.
    This is an autonomous research session. Follow CLAUDE.md EXACTLY — the startup
@@ -102,8 +91,7 @@ EOT
       }
 
       env {
-        MONAD_REPO_DIR = "/home/bigo/Documents/monad"
-        MATH_REPO_URL  = "https://github.com/eliottcassidy2000/math.git"
+        MATH_REPO_URL    = "https://github.com/eliottcassidy2000/math.git"
         GIT_AUTHOR_NAME  = "monad-researcher"
         GIT_AUTHOR_EMAIL = "monad@cluster.local"
       }

@@ -8,6 +8,12 @@ job "math-quick-compute" {
     time_zone        = "America/Denver"
   }
 
+  # Constrain to the node where Max account 2 is logged in
+  constraint {
+    attribute = "${meta.claude_account}"
+    value     = "max-2"
+  }
+
   group "compute" {
     count = 1
 
@@ -20,21 +26,10 @@ job "math-quick-compute" {
 set -euo pipefail
 
 WORK_DIR="/tmp/math-compute-$$"
-MONAD_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
 trap "rm -rf $WORK_DIR" EXIT
 
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
-
-# Select API key via key-ring (dedicated strategy: uses MAX_KEY_2)
-if [ -f "$MONAD_DIR/scripts/key-ring.sh" ]; then
-    eval $("$MONAD_DIR/scripts/key-ring.sh" compute 2>/dev/null) || true
-fi
-export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
-if [ -z "$ANTHROPIC_API_KEY" ]; then
-    echo "ERROR: No API key available"
-    exit 1
-fi
 
 MATH_REPO="${MATH_REPO_URL:-https://github.com/eliottcassidy2000/math.git}"
 git clone --depth=20 "$MATH_REPO" math
@@ -42,7 +37,7 @@ cd math
 
 echo "monad-compute" > .machine-id
 
-# Focused computation session — no theorizing, just crunch numbers
+# Claude Code uses the locally authenticated account — no API key needed
 claude --print --dangerously-skip-permissions \
   "You are monad-compute, a computation agent in the Monad cluster.
    Your ONLY job is to run Python/C scripts and produce data. Be fast and focused.
@@ -73,8 +68,7 @@ EOT
       }
 
       env {
-        MONAD_REPO_DIR = "/home/bigo/Documents/monad"
-        MATH_REPO_URL  = "https://github.com/eliottcassidy2000/math.git"
+        MATH_REPO_URL    = "https://github.com/eliottcassidy2000/math.git"
         GIT_AUTHOR_NAME  = "monad-compute"
         GIT_AUTHOR_EMAIL = "monad@cluster.local"
       }

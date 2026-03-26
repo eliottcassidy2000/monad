@@ -68,7 +68,7 @@ monad gh issues                     # list open issues
 ```
 jobs/        — Nomad job specs (source of truth for what runs)
 cluster/     — Config templates for server.hcl, client.hcl, client-windows.hcl
-scripts/     — monad CLI, sync.sh, setup-node.sh, key-ring.sh, node-doctor.sh
+scripts/     — monad CLI, sync.sh, setup-node.sh, node-doctor.sh
 logs/        — node-doctor reports (only committed when issues found)
 ```
 
@@ -100,11 +100,11 @@ powered by Claude Code instances running as Nomad batch jobs.
 
 ### The Three Research Agents
 
-| Job | Schedule | Key | Role |
-|-----|----------|-----|------|
-| `math-researcher` | Every 6h | MAX_KEY_1 | Deep research — proves theorems, explores connections, writes up results. Day-of-week rotation covers the full research frontier. |
-| `math-quick-compute` | Every 2h | MAX_KEY_2 | Pure computation — runs scripts, extends sequences, generates data. No theorizing, just crunch numbers. |
-| `math-reviewer` | Daily 3 AM | MAX_KEY_3 | Quality control — verifies results against MISTAKES.md, opens court cases for dubious claims, synthesizes daily progress, coordinates other agents. |
+| Job | Schedule | Node (account) | Role |
+|-----|----------|----------------|------|
+| `math-researcher` | Every 6h | Max account 1 node | Deep research — proves theorems, explores connections, writes up results. Day-of-week rotation covers the full research frontier. |
+| `math-quick-compute` | Every 2h | Max account 2 node | Pure computation — runs scripts, extends sequences, generates data. No theorizing, just crunch numbers. |
+| `math-reviewer` | Daily 3 AM | Max account 3 node | Quality control — verifies results against MISTAKES.md, opens court cases for dubious claims, synthesizes daily progress, coordinates other agents. |
 
 The agents use the math repo's built-in coordination:
 - **Session letters** via `agents/processor.py --send` — structured handoff between sessions
@@ -126,59 +126,44 @@ The agents use the math repo's built-in coordination:
 
 ---
 
-## API Key Architecture
+## Account Architecture
+
+Claude Code uses your subscription directly — no API keys needed. Each machine logs
+into one Anthropic account via `claude` CLI, and jobs are constrained to run on the
+machine with the right account.
 
 ### The 4 Accounts
 
-| Account | Type | Purpose | Rate Limits |
-|---------|------|---------|-------------|
-| MAX_KEY_1 | Max | math-researcher sessions | High context, high rate |
-| MAX_KEY_2 | Max | math-quick-compute sessions | High context, high rate |
-| MAX_KEY_3 | Max | math-reviewer sessions | High context, high rate |
-| PRO_KEY | Pro | node-doctor on every machine | Sufficient for short maintenance sessions |
+| Account | Type | Node | Purpose |
+|---------|------|------|---------|
+| Max 1 | Max ($200/mo) | `bigo-server` | math-researcher (deep sessions, needs long context) |
+| Max 2 | Max ($200/mo) | `death-star` | math-quick-compute (heavy computation) |
+| Max 3 | Max ($200/mo) | `bigo-server-oracle` | math-reviewer (daily QC, needs full history) |
+| Pro | Pro ($20/mo) | `windesk` + others | node-doctor (short maintenance sessions) |
 
-### Key Storage
+### How It Works
 
-All keys are stored as Nomad variables (encrypted at rest):
+1. On each node, run `claude` and log in once with the assigned account
+2. Jobs use `constraint { attribute = "${meta.claude_account}" }` to land on the right node
+3. Each node's Nomad config sets `meta { claude_account = "max-1" }` (or `max-2`, `max-3`, `pro`)
+4. No API keys, no Nomad variables, no key-ring — the CLI just uses the logged-in account
 
-```bash
-export NOMAD_ADDR=http://100.78.218.70:4646
-
-nomad var put nomad/jobs/key-ring \
-  MAX_KEY_1=sk-ant-... \
-  MAX_KEY_2=sk-ant-... \
-  MAX_KEY_3=sk-ant-... \
-  PRO_KEY=sk-ant-...
-```
-
-### Key Selection: `scripts/key-ring.sh`
-
-The key-ring script handles selection and rotation:
+### Setup per Node
 
 ```bash
-eval $(scripts/key-ring.sh research)     # → exports MAX_KEY_1
-eval $(scripts/key-ring.sh compute)      # → exports MAX_KEY_2
-eval $(scripts/key-ring.sh review)       # → exports MAX_KEY_3
-eval $(scripts/key-ring.sh doctor)       # → exports PRO_KEY
-eval $(scripts/key-ring.sh round-robin)  # → rotates across Max keys by hour
+# 1. Log in to Claude with the assigned account
+claude
+
+# 2. Add to the node's Nomad config (client.meta block):
+#    claude_account = "max-1"   # or max-2, max-3, pro
+#    Then restart Nomad to pick up the new meta.
 ```
 
-**Dedicated strategy** (default): Each job type gets its own Max key. This avoids
-cross-job rate limit contention — if the researcher is mid-session, the compute
-agent isn't competing for the same key's rate limit.
+### Rate Limit Isolation
 
-**Round-robin strategy** (`MONAD_KEY_STRATEGY=round-robin`): Rotates across all 3 Max
-keys by hour. Better if one account is temporarily rate-limited or down.
-
-### Cost Management
-
-- **Max keys**: ~$200/mo each, used for substantive research work
-- **Pro key**: ~$20/mo, used ONLY for node-doctor maintenance (short sessions, ~3/day/node)
-- **Budget envelope**: ~$620/mo total
-- All research jobs have `prohibit_overlap = true` — no parallel key usage for same job type
-- The reviewer runs once daily (1 session/day on MAX_KEY_3)
-- The researcher runs 4 sessions/day (every 6h on MAX_KEY_1)
-- The compute agent runs 12 sessions/day (every 2h on MAX_KEY_2) — but sessions are short
+Each Max account has independent rate limits. By pinning each job type to a
+different account's node, the researcher never competes with the compute agent
+for quota. The Pro account is only used for short node-doctor sessions (~3/day).
 
 ---
 
