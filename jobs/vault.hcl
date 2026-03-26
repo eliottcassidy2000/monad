@@ -123,8 +123,10 @@ EOT
         read_only   = false
       }
 
-      env {
-        VAULT_ADDR = "http://127.0.0.1:8200"
+      template {
+        data        = "VAULT_ADDR=http://{{ env \"NOMAD_HOST_IP_vault\" }}:{{ env \"NOMAD_HOST_PORT_vault\" }}"
+        destination = "local/vault.env"
+        env         = true
       }
 
       template {
@@ -133,6 +135,7 @@ EOT
 set -e
 KEYS_FILE="/vault/file/.vault-keys.json"
 
+echo "[vault-init] VAULT_ADDR=$VAULT_ADDR"
 echo "[vault-init] Waiting for Vault API..."
 for i in $(seq 1 60); do
   if vault status -format=json >/dev/null 2>&1; then
@@ -241,15 +244,17 @@ SCRIPT
         read_only   = true
       }
 
-      env {
-        VAULT_ADDR = "http://127.0.0.1:8200"
+      template {
+        data        = "VAULT_ADDR=http://{{ env \"NOMAD_HOST_IP_vault\" }}:{{ env \"NOMAD_HOST_PORT_vault\" }}"
+        destination = "local/vault-unsealer.env"
+        env         = true
       }
 
       template {
         data = <<-SCRIPT
 #!/bin/sh
 KEYS_FILE="/vault/file/.vault-keys.json"
-echo "[vault-unsealer] Seal monitor started (15s interval)"
+echo "[vault-unsealer] Seal monitor started (15s interval, addr=$VAULT_ADDR)"
 
 while true; do
   sleep 15
