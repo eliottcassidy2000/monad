@@ -38,38 +38,50 @@ login_lock = threading.Lock()
 
 def get_auth_status():
     """Get current Claude auth status as a dict."""
+    home = os.environ.get("HOME", "/root")
+    env = {**os.environ, "HOME": home}
+
+    # Try CLI first
     try:
         result = subprocess.run(
             ["claude", "auth", "status"],
-            capture_output=True, text=True, timeout=10,
-            env={**os.environ, "HOME": os.environ.get("HOME", "/root")}
+            capture_output=True, text=True, timeout=10, env=env, cwd=home
         )
         if result.returncode == 0:
             data = json.loads(result.stdout.strip())
-            return {
-                "node": NODE_NAME,
-                "logged_in": data.get("loggedIn", False),
-                "email": data.get("email", ""),
-                "subscription": data.get("subscriptionType", "unknown"),
-                "auth_method": data.get("authMethod", ""),
-                "org": data.get("orgName", ""),
-            }
-        else:
-            return {
-                "node": NODE_NAME,
-                "logged_in": False,
-                "email": "",
-                "subscription": "",
-                "error": result.stderr.strip(),
-            }
+            if data.get("loggedIn"):
+                return {
+                    "node": NODE_NAME,
+                    "logged_in": True,
+                    "email": data.get("email", ""),
+                    "subscription": data.get("subscriptionType", "unknown"),
+                    "auth_method": data.get("authMethod", ""),
+                    "org": data.get("orgName", ""),
+                }
     except FileNotFoundError:
         return {"node": NODE_NAME, "logged_in": False, "error": "claude not installed"}
-    except subprocess.TimeoutExpired:
-        return {"node": NODE_NAME, "logged_in": False, "error": "timeout"}
-    except json.JSONDecodeError as e:
-        return {"node": NODE_NAME, "logged_in": False, "error": f"parse error: {e}"}
-    except Exception as e:
-        return {"node": NODE_NAME, "logged_in": False, "error": str(e)}
+    except Exception:
+        pass
+
+    # Fallback: read credentials file directly
+    cred_path = Path(home) / ".claude" / ".credentials.json"
+    try:
+        if cred_path.exists():
+            creds = json.loads(cred_path.read_text())
+            oauth = creds.get("claudeAiOauth", {})
+            if oauth.get("accessToken"):
+                return {
+                    "node": NODE_NAME,
+                    "logged_in": True,
+                    "email": "",
+                    "subscription": oauth.get("subscriptionType", "unknown"),
+                    "auth_method": "claude.ai (file)",
+                    "org": "",
+                }
+    except Exception:
+        pass
+
+    return {"node": NODE_NAME, "logged_in": False, "email": "", "subscription": "", "error": ""}
 
 
 def do_logout():
