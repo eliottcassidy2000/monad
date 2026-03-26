@@ -37,6 +37,7 @@ job "account-manager" {
       env {
         ACCOUNT_MANAGER_PORT = "${NOMAD_PORT_http}"
         NOMAD_ADDR           = "http://100.78.218.70:4646"
+        HOME                 = "/root"
       }
 
       resources {
