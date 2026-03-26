@@ -10,9 +10,9 @@ job "vault" {
   group "vault" {
     count = 1
 
-    volume "vault-data" {
+    volume "monad-repo" {
       type      = "host"
-      source    = "vault-data"
+      source    = "monad-repo"
       read_only = false
     }
 
@@ -31,20 +31,20 @@ job "vault" {
         command = "vault"
         args    = ["server", "-config=/local/vault-config.hcl"]
 
-        # Prevent swap of sensitive data
-        cap_add = ["IPC_LOCK"]
+        # disable_mlock is set in vault config since Docker driver
+        # doesn't allow IPC_LOCK capability by default
       }
 
       volume_mount {
-        volume      = "vault-data"
-        destination = "/vault/file"
+        volume      = "monad-repo"
+        destination = "/vault/repo"
         read_only   = false
       }
 
       template {
         data = <<-EOT
 storage "file" {
-  path = "/vault/file"
+  path = "/vault/repo/.vault-data"
 }
 
 listener "tcp" {
