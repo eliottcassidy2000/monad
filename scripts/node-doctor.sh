@@ -203,40 +203,31 @@ if [ ${#ISSUES[@]} -gt 0 ]; then
     log "Issues detected — checking if Claude can auto-repair..."
 
     if command -v claude &>/dev/null; then
-        # Source the Pro key
-        if [ -f "$SCRIPT_DIR/key-ring.sh" ]; then
-            eval $("$SCRIPT_DIR/key-ring.sh" doctor 2>/dev/null) || true
-        fi
+        # Claude Code uses the locally authenticated account (Pro or Max)
+        # No API key needed — just needs `claude` to be logged in on this machine
+        ISSUE_LIST=$(printf '%s\n' "${ISSUES[@]}")
 
-        if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
-            ISSUE_LIST=$(printf '%s\n' "${ISSUES[@]}")
+        log "Spawning Claude repair session..."
+        claude --print --dangerously-skip-permissions \
+            "You are the node-doctor for $NODE_NAME in the Monad cluster.
 
-            log "Spawning Claude repair session..."
-            claude --print --dangerously-skip-permissions \
-                "You are the node-doctor for $NODE_NAME in the Monad cluster.
+             These issues were detected:
+             $ISSUE_LIST
 
-                 These issues were detected:
-                 $ISSUE_LIST
+             Your repo is at: $REPO_DIR
+             Nomad server: $SERVER_IP
 
-                 Your repo is at: $REPO_DIR
-                 Nomad server: $SERVER_IP
+             For each issue, try to fix it:
+             - Nomad not running: check config at the platform-appropriate location, restart it
+             - Git conflicts: resolve by keeping both versions, commit
+             - Server unreachable: check Tailscale, try reconnect
+             - Disk full: clean old logs in $LOG_DIR, clean /tmp
 
-                 For each issue, try to fix it:
-                 - Nomad not running: check config at the platform-appropriate location, restart it
-                 - Git conflicts: resolve by keeping both versions, commit
-                 - Server unreachable: check Tailscale, try reconnect
-                 - Disk full: clean old logs in $LOG_DIR, clean /tmp
+             After fixing, update the doctor log at $DOCTOR_LOG with what you did.
+             Keep it brief — you have 5 minutes max." \
+            2>&1 | tail -50 >> "$DOCTOR_LOG" || true
 
-                 After fixing, update the doctor log at $DOCTOR_LOG with what you did.
-                 Keep it brief — you have 5 minutes max." \
-                2>&1 | tail -50 >> "$DOCTOR_LOG" || true
-
-            log "Repair session complete"
-        else
-            log "No ANTHROPIC_API_KEY available — cannot auto-repair"
-            echo "" >> "$DOCTOR_LOG"
-            echo "## Auto-repair: SKIPPED (no API key)" >> "$DOCTOR_LOG"
-        fi
+        log "Repair session complete"
     else
         log "Claude CLI not available — cannot auto-repair"
     fi
