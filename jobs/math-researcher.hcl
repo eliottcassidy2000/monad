@@ -2,7 +2,6 @@ job "math-researcher" {
   datacenters = ["dc1"]
   type        = "batch"
 
-  # Run a research session every 6 hours
   periodic {
     crons            = ["0 */6 * * *"]
     prohibit_overlap = true
@@ -12,8 +11,7 @@ job "math-researcher" {
   group "researcher" {
     count = 1
 
-    # Prefer Linux nodes with Docker for isolation, but allow any node
-    task "claude-research-session" {
+    task "session" {
       driver = "raw_exec"
 
       config {
@@ -22,48 +20,92 @@ job "math-researcher" {
 set -euo pipefail
 
 WORK_DIR="/tmp/math-research-$$"
+MONAD_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
+trap "rm -rf $WORK_DIR" EXIT
+
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
-# Clone the math repo (or the cluster's fork when available)
+# Select API key via key-ring (dedicated strategy: uses MAX_KEY_1)
+if [ -f "$MONAD_DIR/scripts/key-ring.sh" ]; then
+    eval $("$MONAD_DIR/scripts/key-ring.sh" research 2>/dev/null) || true
+fi
+
+# Fall back to directly-provided key
+export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+if [ -z "$ANTHROPIC_API_KEY" ]; then
+    echo "ERROR: No API key available. Set via key-ring or ANTHROPIC_API_KEY env."
+    exit 1
+fi
+
+# Clone the math repo fresh each session
 MATH_REPO="${MATH_REPO_URL:-https://github.com/eliottcassidy2000/math.git}"
-git clone --depth=50 "$MATH_REPO" math
+git clone --depth=100 "$MATH_REPO" math
 cd math
 
-# Generate a session focus based on day-of-week rotation
+# Register as a Monad cluster agent if not already registered
+MACHINE_ID="monad-researcher"
+if [ ! -f .machine-id ] || [ "$(cat .machine-id)" != "$MACHINE_ID" ]; then
+    echo "$MACHINE_ID" > .machine-id
+    if [ -f agents/processor.py ]; then
+        python3 agents/processor.py --register 2>/dev/null || true
+    fi
+fi
+
+# Day-of-week rotation: systematic coverage of the research frontier
 DAY=$(date +%u)
+HOUR=$(date +%H)
 case $DAY in
-  1) FOCUS="Pick the highest-priority red open question from OPEN-QUESTIONS.md and make progress on it" ;;
-  2) FOCUS="Run computation scripts in 04-computation/ to extend known sequences or verify conjectures" ;;
-  3) FOCUS="Review hypotheses in 05-knowledge/hypotheses/ — try to prove or refute one" ;;
-  4) FOCUS="Explore connections in TANGENTS.md — develop the most promising cross-domain link" ;;
-  5) FOCUS="Engineering: improve a tool in 04-computation/ or build something from OPEN-QUESTIONS.md engineering tasks" ;;
-  6) FOCUS="Write up a result from 05-knowledge/results/ as a clean proof or paper section" ;;
-  7) FOCUS="Free exploration: read the CONCEPT-MAP.md and investigate whatever seems most promising" ;;
+  1) FOCUS="Pick the highest-priority red open question from 00-navigation/OPEN-QUESTIONS.md and attempt a proof or significant partial result" ;;
+  2) FOCUS="Run computation scripts from 04-computation/ — extend known OEIS sequences, verify conjectures with new data, save ALL outputs via ./run_and_save.sh" ;;
+  3) FOCUS="Review hypotheses in 05-knowledge/hypotheses/INDEX.md — pick one and try to prove or definitively refute it with computation or proof" ;;
+  4) FOCUS="Read 00-navigation/TANGENTS.md and CONCEPT-MAP.md — develop the most promising cross-domain connection into a concrete result" ;;
+  5) FOCUS="Engineering: build or improve a tool — check OPEN-QUESTIONS.md for engineering tasks, improve scripts in 04-computation/, or create a new visualization" ;;
+  6) FOCUS="Write-up day: take a result from 05-knowledge/results/ that lacks a clean proof and write a proper theorem file for 01-canon/theorems/" ;;
+  7) FOCUS="Free exploration: read CONCEPT-MAP.md and INVESTIGATION-BACKLOG.md, investigate whatever seems most promising, follow your curiosity" ;;
 esac
 
-# Run a Claude Code session with the research focus
+# The session prompt follows the math repo's CLAUDE.md protocol exactly
 claude --print --dangerously-skip-permissions \
-  "You are a math research agent in the Monad cluster. Follow CLAUDE.md exactly.
-   Your focus this session: $FOCUS
+  "You are monad-researcher, a Claude research agent in the Monad compute cluster.
+   This is an autonomous research session. Follow CLAUDE.md EXACTLY — the startup
+   sequence is mandatory:
 
-   After doing your work:
-   1. Save all results to 05-knowledge/results/
-   2. Update SESSION-LOG.md with what you did
-   3. Commit and push your work
-   4. Use agents/finish_session.py to close properly"
+   1. Read .machine-id (you are: monad-researcher)
+   2. Read warm-up files IN ORDER:
+      - 01-canon/MISTAKES.md
+      - 01-canon/definitions.md
+      - 00-navigation/OPEN-QUESTIONS.md
+      - 00-navigation/SESSION-LOG.md (last few entries)
+      - 00-navigation/TANGENTS.md (scan briefly)
+   3. git pull
+   4. python3 agents/processor.py --check (read your messages)
+   5. python3 inbox/processor.py (process human inbox if anything there)
 
-# Cleanup
-rm -rf "$WORK_DIR"
+   YOUR FOCUS THIS SESSION: $FOCUS
+
+   As you work:
+   - Save ALL computation outputs via ./run_and_save.sh SCRIPT.py
+   - Log every hypothesis to 05-knowledge/hypotheses/INDEX.md
+   - Add new tangents to 00-navigation/TANGENTS.md
+   - Check 01-canon/MISTAKES.md before trusting any computation
+   - Open court cases for disagreements, never silently override canon
+
+   BEFORE ENDING:
+   1. Use agents/finish_session.py to close your session properly
+   2. Or manually: python3 agents/processor.py --send --to all --subject 'monad-researcher session report'
+   3. Update 00-navigation/SESSION-LOG.md
+   4. git add -A && git commit && git push"
+
 EOT
         ]
       }
 
       env {
-        ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY}"
-        MATH_REPO_URL     = "https://github.com/eliottcassidy2000/math.git"
-        GIT_AUTHOR_NAME   = "monad-researcher"
-        GIT_AUTHOR_EMAIL  = "monad@cluster.local"
+        MONAD_REPO_DIR = "/home/bigo/Documents/monad"
+        MATH_REPO_URL  = "https://github.com/eliottcassidy2000/math.git"
+        GIT_AUTHOR_NAME  = "monad-researcher"
+        GIT_AUTHOR_EMAIL = "monad@cluster.local"
       }
 
       resources {
@@ -71,7 +113,6 @@ EOT
         memory = 1024
       }
 
-      # Research sessions can run up to 2 hours
       kill_timeout = "10s"
     }
 

@@ -2,7 +2,6 @@ job "math-quick-compute" {
   datacenters = ["dc1"]
   type        = "batch"
 
-  # Run computation jobs every 2 hours, offset from researcher
   periodic {
     crons            = ["30 1-23/2 * * *"]
     prohibit_overlap = true
@@ -12,7 +11,7 @@ job "math-quick-compute" {
   group "compute" {
     count = 1
 
-    task "run-computation" {
+    task "session" {
       driver = "raw_exec"
 
       config {
@@ -21,37 +20,63 @@ job "math-quick-compute" {
 set -euo pipefail
 
 WORK_DIR="/tmp/math-compute-$$"
+MONAD_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
+trap "rm -rf $WORK_DIR" EXIT
+
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
+
+# Select API key via key-ring (dedicated strategy: uses MAX_KEY_2)
+if [ -f "$MONAD_DIR/scripts/key-ring.sh" ]; then
+    eval $("$MONAD_DIR/scripts/key-ring.sh" compute 2>/dev/null) || true
+fi
+export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+if [ -z "$ANTHROPIC_API_KEY" ]; then
+    echo "ERROR: No API key available"
+    exit 1
+fi
 
 MATH_REPO="${MATH_REPO_URL:-https://github.com/eliottcassidy2000/math.git}"
 git clone --depth=20 "$MATH_REPO" math
 cd math
 
-# Quick Claude session focused purely on computation
+echo "monad-compute" > .machine-id
+
+# Focused computation session — no theorizing, just crunch numbers
 claude --print --dangerously-skip-permissions \
-  "You are a computation agent in the Monad cluster.
-   Your ONLY job is to run Python scripts from 04-computation/ and save results.
+  "You are monad-compute, a computation agent in the Monad cluster.
+   Your ONLY job is to run Python/C scripts and produce data. Be fast and focused.
 
-   1. Read 00-navigation/OPEN-QUESTIONS.md for computation needs
-   2. Pick ONE script that can produce new data in under 30 minutes
-   3. Run it with ./run_and_save.sh SCRIPT.py 1800
-   4. Save output to 05-knowledge/results/
-   5. If the result is interesting, note it in SESSION-LOG.md
-   6. Commit and push
+   Startup (abbreviated — you are a compute node, not a theorist):
+   1. Read 01-canon/MISTAKES.md (critical — avoid known bugs)
+   2. Read 00-navigation/OPEN-QUESTIONS.md for computation needs
+   3. git pull
+   4. python3 agents/processor.py --check
 
-   Be fast and focused. No theorizing — just compute."
+   Then:
+   1. Pick ONE computation task from OPEN-QUESTIONS.md or 05-knowledge/hypotheses/
+   2. Find the relevant script in 04-computation/
+   3. Run it with: ./run_and_save.sh SCRIPT.py 1800  (30 min timeout)
+   4. If no existing script fits, write a NEW script and save it to 04-computation/
+   5. Save ALL output to 05-knowledge/results/
+   6. If the result confirms or refutes a hypothesis, update 05-knowledge/hypotheses/INDEX.md
+   7. Commit and push
 
-rm -rf "$WORK_DIR"
+   IMPORTANT:
+   - Check MISTAKES.md before running any script — some have known bugs
+   - Always use ./run_and_save.sh, never run scripts directly
+   - If a script takes >30 minutes, note it for the researcher to handle
+   - No proof attempts, no paper writing — JUST COMPUTE"
+
 EOT
         ]
       }
 
       env {
-        ANTHROPIC_API_KEY = "${ANTHROPIC_API_KEY}"
-        MATH_REPO_URL     = "https://github.com/eliottcassidy2000/math.git"
-        GIT_AUTHOR_NAME   = "monad-compute"
-        GIT_AUTHOR_EMAIL  = "monad@cluster.local"
+        MONAD_REPO_DIR = "/home/bigo/Documents/monad"
+        MATH_REPO_URL  = "https://github.com/eliottcassidy2000/math.git"
+        GIT_AUTHOR_NAME  = "monad-compute"
+        GIT_AUTHOR_EMAIL = "monad@cluster.local"
       }
 
       resources {
