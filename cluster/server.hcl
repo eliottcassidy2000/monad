@@ -36,6 +36,7 @@ client {
     location = "home"
   }
 
+  # Adjust path to match where the monad repo lives on this server
   host_volume "monad-repo" {
     path      = "/home/bigo/Documents/monad"
     read_only = false
