@@ -37,9 +37,15 @@ job "storage-test" {
           #!/bin/bash
           set -euo pipefail
 
-          NFS_HOST="100.96.31.66"
+          # Discover NFS host dynamically via Nomad service catalog
+          NFS_HOST="${NFS_HOST:-}"
+          if [ -z "$NFS_HOST" ] && command -v nomad &>/dev/null; then
+            NFS_HOST=$(nomad service info nfs-storage 2>/dev/null | awk 'NR==2 {print $4}' | cut -d: -f1 || echo "")
+          fi
+          # Fallback to known storage node if discovery fails
+          NFS_HOST="${NFS_HOST:-100.96.31.66}"
           NFS_SHARE="$NFS_HOST:/"
-          MOUNT_POINT="/mnt/death-star-test"
+          MOUNT_POINT="/mnt/nfs-test-$$"
           TEST_DIR="$MOUNT_POINT/nomad-storage/test"
           TEST_FILE="$TEST_DIR/nfs-$(hostname)-$(date +%s).txt"
 

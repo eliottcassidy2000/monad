@@ -62,6 +62,11 @@ Cluster:
   monad node-drain <node-id>        Drain a node
   monad node-eligibility <id> <on|off>  Toggle node eligibility
 
+Health:
+  monad doctor                      Run node-doctor health check now
+  monad doctor --cluster            Run cluster-wide watchdog check
+  monad doctor --trends             Show metric trends only
+
 Secrets:
   monad secrets list                List all Nomad variables
   monad secrets get <path>          Get a variable's keys
@@ -335,6 +340,58 @@ cmd_node_eligibility() {
         on)  nomad node eligibility -enable "$node_id" ;;
         off) nomad node eligibility -disable "$node_id" ;;
         *)   err "Use 'on' or 'off'"; return 1 ;;
+    esac
+}
+
+# ─── Doctor commands ───────────────────────────────────────────────────────
+
+cmd_doctor() {
+    local flag="${1:-}"
+    case "$flag" in
+        --cluster)
+            log "Running cluster-wide watchdog..."
+            "$REPO_DIR/scripts/cluster-watchdog.sh"
+            ;;
+        --trends)
+            log "Metric trends for $(hostname):"
+            local mfile="$REPO_DIR/logs/metrics-$(hostname).csv"
+            if [ ! -f "$mfile" ]; then
+                warn "No metrics recorded yet. Run 'monad doctor' first."
+                return
+            fi
+            echo ""
+            # Show latest value and trend for each metric
+            for metric in disk_pct mem_pct; do
+                local values count last_val first_val
+                values=$(grep ",${metric}," "$mfile" | tail -10)
+                count=$(echo "$values" | grep -c . || echo 0)
+                [ "$count" -lt 1 ] && continue
+                last_val=$(echo "$values" | tail -1 | cut -d',' -f3)
+                first_val=$(echo "$values" | head -1 | cut -d',' -f3)
+                local label
+                case "$metric" in
+                    disk_pct) label="Disk" ;;
+                    mem_pct)  label="Memory" ;;
+                    *)        label="$metric" ;;
+                esac
+                local trend="stable"
+                local delta=$((last_val - first_val))
+                if [ "$delta" -gt 5 ]; then trend="↑ rising (+${delta}%)"
+                elif [ "$delta" -lt -5 ]; then trend="↓ falling (${delta}%)"
+                fi
+                printf "  %-10s %3s%%  (%s over %s readings)\n" "$label" "$last_val" "$trend" "$count"
+            done
+            echo ""
+            ;;
+        ""|--local)
+            log "Running local node-doctor..."
+            "$REPO_DIR/scripts/node-doctor.sh"
+            ;;
+        *)
+            err "Unknown flag: $flag"
+            echo "Available: --cluster, --trends, --local (default)"
+            return 1
+            ;;
     esac
 }
 
@@ -617,6 +674,7 @@ main() {
         pulse)            cmd_pulse ;;
         node-drain)       cmd_node_drain "$@" ;;
         node-eligibility) cmd_node_eligibility "$@" ;;
+        doctor)           cmd_doctor "$@" ;;
         secrets)          cmd_secrets "$@" ;;
         events)           cmd_events "$@" ;;
         gh)               cmd_gh "$@" ;;

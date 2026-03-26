@@ -21,7 +21,7 @@ job "nfs-storage" {
       }
     }
 
-    # Manage the native NFS server on death-star
+    # Manage the native NFS server on the storage node
     task "nfs-watchdog" {
       driver = "raw_exec"
 
@@ -37,14 +37,25 @@ job "nfs-storage" {
           #!/bin/bash
           set -euo pipefail
 
+          # Config — override via Nomad meta or env
+          EXPORT_PATH="${NFS_EXPORT_PATH:-/srv/samba/public}"
+          TAILSCALE_CIDR="${NFS_TAILSCALE_CIDR:-100.64.0.0/10}"
+
           log() { echo "[nfs-storage $(date '+%H:%M:%S')] $*"; }
 
-          # Ensure exports are correct
-          EXPECTED='/srv/samba/public 100.64.0.0/10(rw,sync,no_subtree_check,no_root_squash,fsid=0)'
-          if ! grep -q '/srv/samba/public.*100.64.0.0/10' /etc/exports; then
-            log "Updating /etc/exports..."
+          # Idempotent exports setup — only add if not already present
+          EXPECTED="$EXPORT_PATH $TAILSCALE_CIDR(rw,sync,no_subtree_check,no_root_squash,fsid=0)"
+          if ! grep -qF "$EXPORT_PATH" /etc/exports 2>/dev/null; then
+            log "Adding export: $EXPORT_PATH"
             echo "$EXPECTED" >> /etc/exports
             exportfs -ra
+          elif ! grep -q "$TAILSCALE_CIDR" /etc/exports 2>/dev/null; then
+            # Path exists but wrong network — update in place
+            log "Updating export network for $EXPORT_PATH"
+            sed -i "\|^${EXPORT_PATH}|c\\${EXPECTED}" /etc/exports
+            exportfs -ra
+          else
+            log "Exports already correct"
           fi
 
           # Ensure NFS server is running
@@ -56,15 +67,14 @@ job "nfs-storage" {
           log "NFS server active, monitoring..."
           exportfs -v
 
-          # Watchdog loop - keep NFS healthy
+          # Watchdog loop — keep NFS healthy
           while true; do
             if ! systemctl is-active nfs-kernel-server &>/dev/null; then
               log "WARN: NFS server down, restarting..."
               systemctl restart nfs-kernel-server
             fi
 
-            # Verify exports are still active
-            ACTIVE_EXPORTS=$(exportfs -v 2>/dev/null | grep -c '/srv/samba/public' || echo "0")
+            ACTIVE_EXPORTS=$(exportfs -v 2>/dev/null | grep -c "$EXPORT_PATH" || echo "0")
             if [ "$ACTIVE_EXPORTS" -eq 0 ]; then
               log "WARN: No active exports, re-exporting..."
               exportfs -ra
@@ -73,6 +83,12 @@ job "nfs-storage" {
             sleep 60
           done
         SCRIPT
+      }
+
+      # Configurable via Nomad meta or env vars
+      env {
+        NFS_EXPORT_PATH   = "/srv/samba/public"
+        NFS_TAILSCALE_CIDR = "100.64.0.0/10"
       }
 
       resources {
