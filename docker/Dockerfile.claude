@@ -1,0 +1,26 @@
+FROM ubuntu:22.04
+
+RUN apt-get update -qq && \
+    apt-get install -y -qq --no-install-recommends \
+        ca-certificates curl git jq && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create non-root user (Claude refuses --dangerously-skip-permissions as root)
+RUN useradd -m -s /bin/bash claude
+
+# Install Claude Code CLI — self-contained ELF binary
+COPY claude /usr/local/bin/claude
+RUN chmod +x /usr/local/bin/claude
+
+# Install container entrypoint
+COPY container-entrypoint.sh /usr/local/bin/container-entrypoint.sh
+RUN chmod +x /usr/local/bin/container-entrypoint.sh
+
+# Working directory
+RUN mkdir -p /workspace /logs && chown claude:claude /workspace /logs
+WORKDIR /workspace
+
+USER claude
+ENV HOME=/home/claude
+
+ENTRYPOINT ["/usr/local/bin/container-entrypoint.sh"]
