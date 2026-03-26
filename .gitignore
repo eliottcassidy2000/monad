@@ -1,4 +1,5 @@
 .sync-state
+.claude/
 *.swp
 *.swo
 *~
