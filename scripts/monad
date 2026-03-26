@@ -62,6 +62,16 @@ Cluster:
   monad node-drain <node-id>        Drain a node
   monad node-eligibility <id> <on|off>  Toggle node eligibility
 
+Secrets:
+  monad secrets list                List all Nomad variables
+  monad secrets get <path>          Get a variable's keys
+  monad secrets set <path> K=V ...  Set key-value pairs
+  monad secrets generate <path> <key> [length]  Generate and store a random secret
+  monad secrets init-minio          Auto-generate and store MinIO credentials
+
+Events:
+  monad events [n]                  Show last n cluster events (default 20)
+
 GitHub:
   monad gh issue <title> [body]     Create a GitHub issue
   monad gh pr <title> [body]        Create a PR from current branch
@@ -238,8 +248,10 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
         git push origin main --quiet
+        emit_event "deploy" "$job_name" "ok" "deployed and pushed"
         ok "Deployed and pushed: $job_name"
     else
+        emit_event "deploy" "$job_name" "ok" "deployed (no git changes)"
         ok "Deployed: $job_name (no git changes)"
     fi
 }
@@ -268,8 +280,10 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
         git push origin main --quiet
+        emit_event "undeploy" "$job_name" "ok" "stopped and removed"
         ok "Undeployed and pushed: $job_name"
     else
+        emit_event "undeploy" "$job_name" "warn" "no file found"
         warn "No file found at jobs/${job_name}.hcl (job stopped but no git change)"
     fi
 }
@@ -321,6 +335,96 @@ cmd_node_eligibility() {
         on)  nomad node eligibility -enable "$node_id" ;;
         off) nomad node eligibility -disable "$node_id" ;;
         *)   err "Use 'on' or 'off'"; return 1 ;;
+    esac
+}
+
+# ─── Event log ─────────────────────────────────────────────────────────────
+
+EVENTS_FILE="$REPO_DIR/logs/events.jsonl"
+
+emit_event() {
+    local source="$1" action="$2" result="$3" detail="${4:-}"
+    mkdir -p "$(dirname "$EVENTS_FILE")"
+    printf '{"ts":"%s","node":"%s","source":"%s","action":"%s","result":"%s","detail":"%s"}\n' \
+        "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(hostname)" "$source" "$action" "$result" "$detail" \
+        >> "$EVENTS_FILE"
+}
+
+cmd_events() {
+    local count="${1:-20}"
+    if [ ! -f "$EVENTS_FILE" ]; then
+        echo "No events recorded yet."
+        return
+    fi
+    echo "── Recent Cluster Events ──────────────────────────────────────"
+    tail -"$count" "$EVENTS_FILE" | while IFS= read -r line; do
+        local ts source action result detail
+        ts=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ts','?'))" 2>/dev/null || echo "?")
+        source=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('source','?'))" 2>/dev/null || echo "?")
+        action=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('action','?'))" 2>/dev/null || echo "?")
+        result=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('result','?'))" 2>/dev/null || echo "?")
+        detail=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('detail',''))" 2>/dev/null || echo "")
+        local icon="·"
+        case "$result" in
+            ok|success) icon="✓" ;;
+            fail*|error) icon="✗" ;;
+            warn*) icon="⚠" ;;
+            rollback) icon="↩" ;;
+        esac
+        printf "  %s %s [%s] %s %s %s\n" "$icon" "$ts" "$source" "$action" "$result" "$detail"
+    done
+}
+
+# ─── Secrets management ───────────────────────────────────────────────────
+
+cmd_secrets() {
+    local subcmd="${1:-}"; shift || true
+
+    case "$subcmd" in
+        list)
+            nomad var list
+            ;;
+        get)
+            local path="${1:-}"
+            [ -z "$path" ] && { err "Usage: monad secrets get <path>"; return 1; }
+            nomad var get "$path"
+            ;;
+        set)
+            local path="${1:-}"; shift || true
+            [ -z "$path" ] && { err "Usage: monad secrets set <path> KEY=VALUE ..."; return 1; }
+            [ $# -eq 0 ] && { err "Provide at least one KEY=VALUE pair"; return 1; }
+            nomad var put "$path" "$@"
+            emit_event "secrets" "set" "ok" "$path"
+            ok "Set ${#} key(s) at $path"
+            ;;
+        generate)
+            local path="${1:-}"
+            local key="${2:-}"
+            local length="${3:-32}"
+            [ -z "$path" ] || [ -z "$key" ] && { err "Usage: monad secrets generate <path> <key> [length]"; return 1; }
+            local secret
+            secret=$(openssl rand -base64 "$length" | tr -d '=/+' | head -c "$length")
+            nomad var put "$path" "${key}=${secret}"
+            emit_event "secrets" "generate" "ok" "${path}/${key} (${length} chars)"
+            ok "Generated and stored: $path → $key (${length} chars)"
+            ;;
+        init-minio)
+            log "Initializing MinIO credentials..."
+            local password
+            password=$(openssl rand -base64 48 | tr -d '=/+' | head -c 32)
+            nomad var put nomad/jobs/minio-storage \
+                "MINIO_ROOT_USER=monad-admin" \
+                "MINIO_ROOT_PASSWORD=${password}"
+            emit_event "secrets" "init-minio" "ok" "credentials generated and stored"
+            ok "MinIO credentials stored in nomad/jobs/minio-storage"
+            ok "User: monad-admin"
+            ok "Password: (generated, ${#password} chars, stored in Nomad variables)"
+            ;;
+        *)
+            err "Unknown secrets subcommand: $subcmd"
+            echo "Available: list, get, set, generate, init-minio"
+            return 1
+            ;;
     esac
 }
 
@@ -465,6 +569,22 @@ cmd_pulse() {
     fi
     echo ""
 
+    # ── Recent events ──
+    echo "── Recent Events ──────────────────────────────────────────────"
+    if [ -f "$EVENTS_FILE" ]; then
+        tail -5 "$EVENTS_FILE" | while IFS= read -r line; do
+            local ts action result detail
+            ts=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('ts','?')[:16])" 2>/dev/null || echo "?")
+            action=$(echo "$line" | python3 -c "import sys,json; d=json.load(sys.stdin); print(f\"{d.get('source','?')}/{d.get('action','?')}\")" 2>/dev/null || echo "?")
+            result=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('result','?'))" 2>/dev/null || echo "?")
+            detail=$(echo "$line" | python3 -c "import sys,json; print(json.load(sys.stdin).get('detail',''))" 2>/dev/null || echo "")
+            printf "  %s  %-24s  %-8s  %s\n" "$ts" "$action" "$result" "$detail"
+        done
+    else
+        echo "  (no events yet)"
+    fi
+    echo ""
+
     # ── Open issues ──
     echo "── Open Issues ────────────────────────────────────────────────"
     if command -v gh &>/dev/null; then
@@ -497,6 +617,8 @@ main() {
         pulse)            cmd_pulse ;;
         node-drain)       cmd_node_drain "$@" ;;
         node-eligibility) cmd_node_eligibility "$@" ;;
+        secrets)          cmd_secrets "$@" ;;
+        events)           cmd_events "$@" ;;
         gh)               cmd_gh "$@" ;;
         help|--help|-h|"")usage ;;
         *)
