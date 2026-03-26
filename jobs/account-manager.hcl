@@ -2,7 +2,7 @@ job "account-manager" {
   datacenters = ["dc1"]
   type        = "system"
 
-  # Linux nodes
+  # Linux nodes — download script from GitHub so it works on all nodes
   group "linux" {
     constraint {
       attribute = "${attr.kernel.name}"
@@ -25,8 +25,13 @@ job "account-manager" {
       driver = "raw_exec"
 
       config {
-        command = "python3"
-        args    = ["/home/bigo/Documents/monad/scripts/account-manager.py"]
+        command = "/bin/bash"
+        args    = ["-c", "python3 local/account-manager.py"]
+      }
+
+      artifact {
+        source      = "https://raw.githubusercontent.com/claude-monad/monad/main/scripts/account-manager.py"
+        destination = "local/"
       }
 
       env {
@@ -41,7 +46,7 @@ job "account-manager" {
     }
   }
 
-  # Windows nodes
+  # Windows nodes — use local path (windesk has the repo cloned)
   group "windows" {
     constraint {
       attribute = "${attr.kernel.name}"
