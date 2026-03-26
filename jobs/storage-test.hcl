@@ -38,7 +38,7 @@ job "storage-test" {
           set -euo pipefail
 
           NFS_HOST="100.96.31.66"
-          NFS_SHARE="$NFS_HOST:/nfsshare"
+          NFS_SHARE="$NFS_HOST:/"
           MOUNT_POINT="/mnt/death-star-test"
           TEST_DIR="$MOUNT_POINT/nomad-storage/test"
           TEST_FILE="$TEST_DIR/nfs-$(hostname)-$(date +%s).txt"
