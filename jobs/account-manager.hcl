@@ -2,7 +2,7 @@ job "account-manager" {
   datacenters = ["dc1"]
   type        = "system"
 
-  # Linux nodes — download script from GitHub so it works on all nodes
+  # Linux nodes — clone monad repo to get the script, then run it
   group "linux" {
     constraint {
       attribute = "${attr.kernel.name}"
@@ -26,12 +26,20 @@ job "account-manager" {
 
       config {
         command = "/bin/bash"
-        args    = ["-c", "python3 local/account-manager.py"]
-      }
-
-      artifact {
-        source      = "https://raw.githubusercontent.com/claude-monad/monad/main/scripts/account-manager.py"
-        destination = "local/"
+        args    = ["-c", <<EOT
+# Try local repo first, fall back to downloading
+SCRIPT=""
+for p in /home/bigo/Documents/monad /home/e/monad /root/monad; do
+  [ -f "$p/scripts/account-manager.py" ] && SCRIPT="$p/scripts/account-manager.py" && break
+done
+if [ -z "$SCRIPT" ]; then
+  mkdir -p /tmp/monad-am
+  curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/scripts/account-manager.py -o /tmp/monad-am/account-manager.py
+  SCRIPT="/tmp/monad-am/account-manager.py"
+fi
+exec python3 "$SCRIPT"
+EOT
+        ]
       }
 
       env {
