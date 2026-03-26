@@ -78,9 +78,73 @@ scripts/     — monad CLI, sync.sh, setup-node.sh
 - Resource limits on every task (cpu + memory)
 - Use Docker driver for application workloads, raw_exec only for system tasks
 
+## Cluster Mission: Autonomous Math Research
+
+The primary workload of this cluster is **autonomous pure mathematics research**, powered by
+Claude Code instances running as Nomad batch jobs against the tournament theory repository:
+
+- **Upstream**: `eliottcassidy2000/math` — deep research on tournaments (complete directed
+  graphs), their combinatorial/algebraic/topological properties, 114+ theorems, 150+ computation
+  scripts, OEIS contributions, and engineering applications
+- **The math repo has its own CLAUDE.md** with a mandatory startup sequence, agent messaging
+  system, court dispute system, and session logging protocol. All research agents MUST follow it.
+
+### Research Job Architecture
+
+Three autonomous agent types run on the cluster:
+
+| Job | Schedule | Role |
+|-----|----------|------|
+| `math-researcher` | Every 6h | Deep research sessions — proves theorems, explores connections, writes up results |
+| `math-quick-compute` | Every 2h | Pure computation — runs scripts, extends sequences, generates data |
+| `math-reviewer` | Daily 3 AM | Quality control — verifies results, checks for mistakes, synthesizes daily progress |
+
+All jobs clone the math repo, run a Claude Code session with a specific focus, commit results,
+and push. The math repo's own agent coordination system (`agents/processor.py`) handles
+inter-agent messaging.
+
+### API Key Management
+
+Research jobs need `ANTHROPIC_API_KEY` set as a Nomad variable or passed via environment.
+Use Nomad variables to store secrets:
+```bash
+nomad var put nomad/jobs/math-researcher ANTHROPIC_API_KEY=sk-ant-...
+```
+
+### Scaling Strategy
+
+- **Compute-heavy work** (sequence enumeration, large n tournaments): prefer `death-star` or Linux nodes with raw CPU
+- **Research sessions** (reasoning, proof construction): any node with Claude Code installed
+- **Review/synthesis**: runs on server node for access to full git history
+- Future: add GPU nodes for ML-adjacent tasks (tournament TDA, polynomial_head experiments)
+
+## Nodes
+
+| Node | IP | OS | Role | Capabilities |
+|------|----|----|------|-------------|
+| `bigo-server` | 100.78.218.70 | Linux | server + client | Docker, raw_exec, monad-repo volume |
+| `bigo-server-oracle` | 100.119.217.63 | Linux | client | Docker, raw_exec |
+| `death-star` | 100.96.31.66 | Linux | client | Docker, raw_exec |
+| `V1410-1` | 100.75.75.39 | Linux | client | Docker, raw_exec |
+| `windesk` | 100.94.210.54 | Windows | client | raw_exec, Claude Code native |
+
 ## Adding a New Node
 
+### Linux
 ```bash
 curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/scripts/setup-node.sh \
   | sudo bash -s -- client 100.78.218.70
+```
+
+### Windows
+```powershell
+# Install Nomad
+scoop install nomad
+
+# Create config (see cluster/client-windows.hcl template)
+mkdir C:\nomad\config C:\nomad\data
+# Edit C:\nomad\config\nomad.hcl with your Tailscale IP
+
+# Start agent
+nomad agent -config=C:\nomad\config\nomad.hcl
 ```

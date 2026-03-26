@@ -3,8 +3,20 @@
 # All Claude agents MUST use this instead of raw git/nomad/gh commands.
 set -euo pipefail
 
-REPO_DIR="/home/bigo/Documents/monad"
-NOMAD_ADDR="http://100.78.218.70:4646"
+# Auto-detect repo dir: walk up from script location to find .git
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+if [ ! -d "$REPO_DIR/.git" ]; then
+    # Fallback for known locations
+    if [ -d "/home/bigo/Documents/monad/.git" ]; then
+        REPO_DIR="/home/bigo/Documents/monad"
+    else
+        echo "ERROR: Cannot find monad repo root" >&2
+        exit 1
+    fi
+fi
+
+NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
 export NOMAD_ADDR
 
 RED='\033[0;31m'
