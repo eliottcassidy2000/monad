@@ -559,7 +559,7 @@ cmd_pulse() {
     local found_sessions=false
     for job in math-researcher math-quick-compute math-reviewer; do
         local latest
-        latest=$(nomad job status "$job" 2>/dev/null | grep -E '^\s*[a-f0-9]' | head -3)
+        latest=$(nomad job status "$job" 2>/dev/null | grep -E '^\s*[a-f0-9]' | head -3 || true)
         if [ -n "$latest" ]; then
             echo "  $job:"
             echo "$latest" | while read -r line; do echo "    $line"; done
