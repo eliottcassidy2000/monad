@@ -206,10 +206,12 @@ def get_cluster_auth_status():
         addr = node.get("address", "")
         if not addr:
             return {**node, "auth": {"error": "no address"}}
+        # For this node, call get_auth_status() directly instead of HTTP
+        # (avoids single-threaded server deadlock on self-query)
+        if node.get("name") == NODE_NAME:
+            return {**node, "auth": get_auth_status()}
         try:
-            # Use localhost for this node to avoid firewall issues
-            query_addr = "127.0.0.1" if node.get("name") == NODE_NAME else addr
-            url = f"http://{query_addr}:{PORT}/api/status"
+            url = f"http://{addr}:{PORT}/api/status"
             req = urllib.request.Request(url)
             resp = urllib.request.urlopen(req, timeout=5)
             auth = json.loads(resp.read())
@@ -555,7 +557,9 @@ def main():
         except ValueError:
             pass
 
-    server = http.server.HTTPServer(("0.0.0.0", port), Handler)
+    class ThreadedServer(http.server.ThreadingHTTPServer):
+        daemon_threads = True
+    server = ThreadedServer(("0.0.0.0", port), Handler)
     print(f"[account-manager] {NODE_NAME} listening on http://0.0.0.0:{port}")
     print(f"[account-manager] Dashboard: http://{NODE_NAME}:{port}/")
     try:
