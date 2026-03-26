@@ -8,10 +8,12 @@ The cluster's mission is **autonomous pure mathematics research**.
 ## Architecture
 - **Bootstrap server**: `bigo-server` (100.78.218.70) — Nomad server + client
 - **Worker nodes**: Join via Tailscale, run as Nomad clients
-- **GitOps**: `monad-sync` periodic job pulls git every 5 min, reconciles `jobs/`
+- **GitOps**: `monad-sync` pulls git every 5 min, drift-detects changed jobs, canary-checks deploys
 - **Service discovery**: Nomad native (no Consul)
 - **Networking**: All inter-node traffic over Tailscale
-- **Self-healing**: `node-doctor` runs on each node via OS cron (not Nomad)
+- **Self-healing**: `node-doctor` on each node (OS cron), `cluster-watchdog` on server (Nomad periodic)
+- **Observability**: Cluster event log (`logs/events.jsonl`), metric trends, `monad pulse` dashboard
+- **Secrets**: Nomad variables (encrypted at rest), managed via `monad secrets`
 
 ## The `monad` CLI
 
@@ -44,6 +46,22 @@ monad validate <file.hcl>           # validate without deploying
 
 # Cluster
 monad cluster-status                # full health overview
+monad pulse                         # rich dashboard: nodes, jobs, events, trends, issues
+
+# Health
+monad doctor                        # run node health check now
+monad doctor --cluster              # run cluster-wide watchdog
+monad doctor --trends               # show metric trend analysis
+
+# Secrets (Nomad variables, encrypted at rest)
+monad secrets list                   # list all stored secrets
+monad secrets get <path>             # show a variable's keys
+monad secrets set <path> K=V ...     # store key-value pairs
+monad secrets generate <path> <key>  # generate and store a random secret
+monad secrets init-minio             # auto-generate MinIO credentials
+
+# Events (cluster audit trail)
+monad events [n]                     # show last n cluster events
 
 # GitHub
 monad gh issue "title" "body"       # create issue
@@ -66,10 +84,12 @@ monad gh issues                     # list open issues
 ## Repo Structure
 
 ```
-jobs/        — Nomad job specs (source of truth for what runs)
-cluster/     — Config templates for server.hcl, client.hcl, client-windows.hcl
-scripts/     — monad CLI, sync.sh, setup-node.sh, node-doctor.sh
-logs/        — node-doctor reports (only committed when issues found)
+jobs/              — Nomad job specs (source of truth for what runs)
+cluster/           — Config templates for server.hcl, client.hcl, client-windows.hcl
+scripts/           — monad CLI, sync.sh, setup-node.sh, node-doctor.sh, cluster-watchdog.sh
+scripts/prompts/   — Research agent prompt templates (researcher.md, compute.md, reviewer.md)
+scripts/math-session.sh — Shared launcher for all math agent sessions
+logs/              — node-doctor reports, watchdog reports, metrics CSVs, events.jsonl
 ```
 
 ## Job Spec Conventions
@@ -179,19 +199,26 @@ node-doctor can.
 2. **Nomad server reachability** — can we reach bigo-server:4646?
 3. **Nomad agent health** — is the local agent running and eligible?
 4. **Git state** — is the repo clean, up to date, no conflicts?
-5. **Disk space** — are we running out?
-6. **Claude CLI availability** — can this node run research jobs?
+5. **Disk space** — with **trend analysis** predicting when disks will fill
+6. **Memory usage** — with trend tracking over time
+7. **Claude CLI availability** — can this node run research jobs?
 
 ### What It Does When Things Break
 
-If any check fails and Claude Code + PRO_KEY are available:
-- Spawns a short Claude session to diagnose and fix the issue
-- Restarts Nomad if it crashed
-- Resolves git conflicts
-- Cleans disk space
-- Reports the issue to the cluster via git commit
+1. **Auto-repair**: Spawns a Claude session to diagnose and fix issues
+2. **GitHub issues**: If repair fails, creates a GitHub issue automatically
+3. **Event log**: Records all health events to `logs/events.jsonl`
+4. **Trend predictions**: Warns when metrics are trending toward thresholds ("disk will be full in 3.2 days")
 
-If Claude is unavailable, it logs the issue for manual intervention.
+### Cluster Watchdog
+
+In addition to per-node doctors, the `cluster-watchdog` job runs every 15 minutes
+on the server and monitors the cluster from above:
+- Nodes that silently disappeared
+- Jobs stuck in pending (no eligible nodes)
+- Research sessions that stopped dispatching
+- Cross-node patterns (all nodes low on disk)
+- Node-doctor report freshness (is the doctor itself working?)
 
 ### Installation
 
