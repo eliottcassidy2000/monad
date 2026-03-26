@@ -8,7 +8,14 @@
 # State file: .sync-state (JSON map of job_name → sha256)
 set -euo pipefail
 
-REPO_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
+# Auto-detect: prefer env var, then script's parent dir, then legacy path
+if [ -n "${MONAD_REPO_DIR:-}" ]; then
+    REPO_DIR="$MONAD_REPO_DIR"
+elif [ -d "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.git" ]; then
+    REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+else
+    REPO_DIR="/home/${USER:-bigo}/monad"
+fi
 NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
 export NOMAD_ADDR
 

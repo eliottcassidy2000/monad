@@ -8,8 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 if [ ! -d "$REPO_DIR/.git" ]; then
     # Fallback for known locations
-    if [ -d "/home/bigo/Documents/monad/.git" ]; then
-        REPO_DIR="/home/bigo/Documents/monad"
+    if [ -d "/home/${USER:-bigo}/monad/.git" ]; then
+        REPO_DIR="/home/${USER:-bigo}/monad"
     else
         echo "ERROR: Cannot find monad repo root" >&2
         exit 1
