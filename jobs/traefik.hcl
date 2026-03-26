@@ -32,7 +32,7 @@ job "traefik" {
           "--entrypoints.web.address=:80",
           "--entrypoints.traefik.address=:8081",
           "--providers.nomad=true",
-          "--providers.nomad.endpoint.address=http://127.0.0.1:4646",
+          "--providers.nomad.endpoint.address=http://100.78.218.70:4646",
           "--providers.nomad.exposedByDefault=false",
         ]
       }
