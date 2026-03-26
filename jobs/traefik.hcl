@@ -11,6 +11,7 @@ job "traefik" {
     count = 1
 
     network {
+      mode = "host"
       port "http" {
         static = 80
       }
@@ -23,14 +24,15 @@ job "traefik" {
       driver = "docker"
 
       config {
-        image = "traefik:v3.2"
-        ports = ["http", "dashboard"]
-        args  = [
+        image        = "traefik:v3.2"
+        network_mode = "host"
+        args         = [
           "--api.dashboard=true",
           "--api.insecure=true",
           "--entrypoints.web.address=:80",
+          "--entrypoints.traefik.address=:8081",
           "--providers.nomad=true",
-          "--providers.nomad.endpoint.address=http://100.78.218.70:4646",
+          "--providers.nomad.endpoint.address=http://127.0.0.1:4646",
           "--providers.nomad.exposedByDefault=false",
         ]
       }
