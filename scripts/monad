@@ -62,6 +62,13 @@ Cluster:
   monad node-drain <node-id>        Drain a node
   monad node-eligibility <id> <on|off>  Toggle node eligibility
 
+Livestream:
+  monad stream status               Show livestream system status
+  monad stream go-live              Start compositor + all outputs
+  monad stream stop                 Stop all streaming
+  monad stream dashboard            Print dashboard URL
+  monad stream key <platform> <key> Set a stream key (youtube, twitch)
+
 Health:
   monad doctor                      Run node-doctor health check now
   monad doctor --cluster            Run cluster-wide watchdog check
@@ -347,6 +354,79 @@ cmd_node_eligibility() {
         on)  nomad node eligibility -enable "$node_id" ;;
         off) nomad node eligibility -disable "$node_id" ;;
         *)   err "Use 'on' or 'off'"; return 1 ;;
+    esac
+}
+
+# ─── Livestream commands ───────────────────────────────────────────────────
+
+_stream_api() {
+    local endpoint="$1"
+    local method="${2:-GET}"
+    local data="${3:-}"
+    # Find livestream dashboard via Nomad service discovery, or fall back to known node
+    local dashboard_url=""
+    if command -v nomad &>/dev/null; then
+        dashboard_url=$(nomad service info livestream-dashboard 2>/dev/null | awk 'NR==2 {print "http://"$4}' || echo "")
+    fi
+    dashboard_url="${dashboard_url:-http://100.119.217.63:8080}"
+
+    if [ "$method" = "POST" ] && [ -n "$data" ]; then
+        curl -s -X POST -H "Content-Type: application/json" -d "$data" "${dashboard_url}${endpoint}" 2>/dev/null
+    elif [ "$method" = "POST" ]; then
+        curl -s -X POST "${dashboard_url}${endpoint}" 2>/dev/null
+    else
+        curl -s "${dashboard_url}${endpoint}" 2>/dev/null
+    fi
+}
+
+cmd_stream() {
+    local subcmd="${1:-}"; shift || true
+
+    case "$subcmd" in
+        status)
+            log "Livestream status:"
+            local status
+            status=$(_stream_api "/api/status")
+            if [ -z "$status" ]; then
+                err "Cannot reach livestream dashboard"
+                return 1
+            fi
+            echo "$status" | python3 -m json.tool 2>/dev/null || echo "$status"
+            ;;
+        go-live)
+            log "Starting all streams..."
+            _stream_api "/api/start-all" "POST" | python3 -m json.tool 2>/dev/null
+            ;;
+        stop)
+            log "Stopping all streams..."
+            _stream_api "/api/stop-all" "POST" | python3 -m json.tool 2>/dev/null
+            ;;
+        dashboard)
+            local dashboard_url=""
+            if command -v nomad &>/dev/null; then
+                dashboard_url=$(nomad service info livestream-dashboard 2>/dev/null | awk 'NR==2 {print "http://"$4}' || echo "")
+            fi
+            dashboard_url="${dashboard_url:-http://100.119.217.63:8080}"
+            ok "Dashboard: $dashboard_url"
+            ;;
+        key)
+            local platform="${1:-}"
+            local key="${2:-}"
+            [ -z "$platform" ] || [ -z "$key" ] && { err "Usage: monad stream key <youtube|twitch> <stream-key>"; return 1; }
+            local url
+            case "$platform" in
+                youtube) url="rtmp://a.rtmp.youtube.com/live2" ;;
+                twitch)  url="rtmp://live.twitch.tv/app" ;;
+                *)       err "Unknown platform: $platform"; return 1 ;;
+            esac
+            _stream_api "/api/output/${platform}" "POST" "{\"url\":\"${url}\",\"key\":\"${key}\",\"enabled\":true}"
+            ok "Set $platform stream key"
+            ;;
+        *)
+            err "Unknown stream subcommand: $subcmd"
+            echo "Available: status, go-live, stop, dashboard, key"
+            return 1
+            ;;
     esac
 }
 
@@ -694,6 +774,7 @@ main() {
         pulse)            cmd_pulse ;;
         node-drain)       cmd_node_drain "$@" ;;
         node-eligibility) cmd_node_eligibility "$@" ;;
+        stream)           cmd_stream "$@" ;;
         doctor)           cmd_doctor "$@" ;;
         memory)           "$REPO_DIR/scripts/cluster-memory.sh" "$@" ;;
         secrets)          cmd_secrets "$@" ;;

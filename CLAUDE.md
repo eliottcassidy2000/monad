@@ -89,6 +89,7 @@ cluster/           — Config templates for server.hcl, client.hcl, client-windo
 scripts/           — monad CLI, sync.sh, setup-node.sh, node-doctor.sh, cluster-watchdog.sh
 scripts/prompts/   — Research agent prompt templates (researcher.md, compute.md, reviewer.md)
 scripts/math-session.sh — Shared launcher for all math agent sessions
+livestream/        — Livestream system: nginx-rtmp config, restream engine, web dashboard
 logs/              — node-doctor reports, watchdog reports, metrics CSVs, events.jsonl
 ```
 
@@ -100,6 +101,47 @@ logs/              — node-doctor reports, watchdog reports, metrics CSVs, even
 - Constrain server-only tasks: `attribute = "${meta.role}"` / `value = "server"`
 - Resource limits on every task (cpu + memory)
 - Use Docker driver for application workloads, raw_exec for system tasks and Claude sessions
+
+---
+
+## Livestream System
+
+Multi-platform restreaming service running on `bigo-server-oracle` (best bandwidth).
+
+### Architecture
+```
+OBS → rtmp://<tailscale-ip>:1935/live/<key>  →  nginx-rtmp (ingest)
+                                                       ↓
+                                              FFmpeg compositor/switcher
+                                                       ↓
+                                              ┌────────┼────────┐
+                                              YouTube   Twitch   (future)
+```
+
+### Dashboard
+Web control panel at `http://<bigo-server-oracle>:8080` on the Tailnet:
+- View active ingest streams and composite preview (HLS)
+- Select which sources go into the composite
+- Choose layout: single, side-by-side, picture-in-picture
+- Configure and start/stop per-platform restreaming
+- Set stream keys for YouTube and Twitch
+
+### CLI Control
+```bash
+monad stream status              # show livestream system status
+monad stream go-live             # start compositor + all outputs
+monad stream stop                # stop all streaming
+monad stream dashboard           # print dashboard URL
+monad stream key youtube <key>   # set YouTube stream key
+monad stream key twitch <key>    # set Twitch stream key
+```
+
+### OBS Setup
+In OBS streaming settings:
+- **Server**: `rtmp://<bigo-server-oracle-tailscale-ip>:1935/live`
+- **Stream Key**: any name (`cam1`, `screen`, `main`, etc.)
+
+Multiple OBS instances can stream to different keys simultaneously.
 
 ---
 
