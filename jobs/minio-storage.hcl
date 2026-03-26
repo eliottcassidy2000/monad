@@ -40,9 +40,17 @@ job "minio-storage" {
         read_only   = false
       }
 
-      env {
-        MINIO_ROOT_USER     = "monad-admin"
-        MINIO_ROOT_PASSWORD = "monad-storage-2026"
+      # Credentials loaded from Nomad variables (encrypted at rest).
+      # Set once: nomad var put nomad/jobs/minio-storage MINIO_ROOT_USER=monad-admin MINIO_ROOT_PASSWORD=<secret>
+      template {
+        data        = <<-EOT
+{{ with nomadVar "nomad/jobs/minio-storage" }}
+MINIO_ROOT_USER={{ .MINIO_ROOT_USER }}
+MINIO_ROOT_PASSWORD={{ .MINIO_ROOT_PASSWORD }}
+{{ end }}
+EOT
+        destination = "secrets/minio.env"
+        env         = true
       }
 
       resources {
