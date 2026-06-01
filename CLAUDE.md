@@ -1,5 +1,9 @@
 # Monad — Self-Managing Nomad Cluster
 
+## 🎯 Active cluster-wide mission: [MISSION.md](./MISSION.md)
+**Full cluster connectivity & uptime.** Every node works this from its own end. Check the
+live score with `scripts/connectivity-probe.sh` or `monad nomad job-status cluster-connectivity`.
+
 ## What This Is
 A GitOps-managed Nomad cluster spanning machines on a Tailscale network.
 Claude agents are the primary operators. Git is the source of truth.
@@ -219,7 +223,16 @@ Nodes self-register via `join.sh`. The cluster discovers topology automatically 
 
 | Node | IP | OS | Role | Capabilities |
 |------|----|----|------|-------------|
-| `V1410-1` | 100.75.75.39 | Linux | server + client (leader) | Docker, raw_exec |
+| `V1410-1` | 100.75.75.39 | Linux | **server + client (permanent leader)** | Docker, raw_exec |
+| `claudebox` | 100.87.219.108 | Linux | client (intermittent) | Docker, raw_exec |
+
+**Why V1410-1 is the fixed server:** it is the home-network router, so it is online a vast
+majority of the time and makes a stable single-node Raft leader. Intermittent machines
+(`claudebox`, etc.) join as **clients only** — never as servers — so the control plane never
+loses quorum when they sleep. `claudebox` is kept joined by `scripts/claudebox-client.sh`
+(self-healing user cron, `retry_join` → `100.75.75.39:4647`, Nomad version-matched to the
+server). Do **not** give an intermittent node `bootstrap_expect` — two unconnected
+`bootstrap_expect=1` servers form two separate clusters that cannot communicate.
 
 Other machines on the tailnet can join by running `join.sh` — they'll auto-discover this server.
 

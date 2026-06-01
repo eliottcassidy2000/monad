@@ -7,3 +7,6 @@
 __pycache__/
 *.pyc
 .vault-data/
+
+# connectivity metric runtime data (regenerated every 5 min on the server)
+logs/metrics/
