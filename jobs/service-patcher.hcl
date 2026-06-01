@@ -32,8 +32,8 @@ job "service-patcher" {
       }
 
       env {
-        NOMAD_ADDR = "http://100.78.218.70:4646"
-        VAULT_ADDR = "http://100.78.218.70:8200"
+        NOMAD_ADDR = "http://100.87.219.108:4646"
+        VAULT_ADDR = "http://100.87.219.108:8200"
       }
 
       resources {

@@ -11,7 +11,7 @@ set -euo pipefail
 # ────────────────────────────────────────────────────────────────────
 
 REPO_DIR="${MONAD_REPO_DIR:-/home/bigo/Documents/monad}"
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
+NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
 EVENTS_FILE="$REPO_DIR/logs/events.jsonl"
 export NOMAD_ADDR
 

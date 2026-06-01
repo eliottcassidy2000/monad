@@ -6,7 +6,7 @@
 set -euo pipefail
 
 ROLE="${1:-client}"
-SERVER_IP="${2:-100.78.218.70}"
+SERVER_IP="${2:-100.87.219.108}"
 NODE_NAME="$(hostname)"
 MONAD_DIR="${MONAD_DIR:-/home/${SUDO_USER:-$(whoami)}/monad}"
 

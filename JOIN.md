@@ -19,7 +19,7 @@ curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstra
   | bash -s -- <SERVER_IP> <CLAUDE_ACCOUNT>
 ```
 
-- `<SERVER_IP>` — the Nomad server's Tailscale IP. **Default: `100.78.218.70`** (bigo-server).
+- `<SERVER_IP>` — the Nomad server's Tailscale IP. **Default: `100.87.219.108`** (claudebox).
   Use the default unless the human gives you another.
 - `<CLAUDE_ACCOUNT>` — which Anthropic account this machine logs into: `max-1`, `max-2`,
   `max-3`, or `pro`. **Ask the human which one** (it determines what work this node runs).
@@ -28,7 +28,7 @@ curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstra
 Example with defaults:
 ```bash
 curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh \
-  | bash -s -- 100.78.218.70 pro
+  | bash -s -- 100.87.219.108 pro
 ```
 
 On **Windows**, do not use the command above. See [§ Windows](#windows) below.
@@ -39,7 +39,7 @@ On **Windows**, do not use the command above. See [§ Windows](#windows) below.
 
 1. **Detect the OS.** `uname -s` → `Linux` / `Darwin` (macOS) / `MINGW*`/`MSYS*` (Windows).
 2. **Ask the human two things** (only if not already told): the server IP (default
-   `100.78.218.70`) and which Claude account this machine uses (`max-1/2/3/pro`).
+   `100.87.219.108`) and which Claude account this machine uses (`max-1/2/3/pro`).
 3. **Run the bootstrap command** above. It installs Tailscale, the toolchains (Lean,
    Python, a container runtime, the Claude CLI), the Nomad client, and the self-healing cron.
    It is safe to re-run if a step needs the human to finish a login first.

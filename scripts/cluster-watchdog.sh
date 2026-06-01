@@ -12,7 +12,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
+NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
 export NOMAD_ADDR
 
 LOG_DIR="$REPO_DIR/logs"

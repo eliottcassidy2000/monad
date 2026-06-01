@@ -4,7 +4,7 @@
 # Variables to replace:
 #   TAILSCALE_IP - this node's Tailscale IP
 #   NODE_NAME    - hostname
-#   SERVER_IP    - bootstrap server's Tailscale IP (100.78.218.70)
+#   SERVER_IP    - bootstrap server's Tailscale IP (100.87.219.108)
 
 log_level = "INFO"
 data_dir  = "C:\\nomad\\data"

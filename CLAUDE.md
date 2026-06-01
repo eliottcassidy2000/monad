@@ -6,7 +6,8 @@ Claude agents are the primary operators. Git is the source of truth.
 The cluster's mission is **autonomous pure mathematics research**.
 
 ## Architecture
-- **Bootstrap server**: `bigo-server` (100.78.218.70) — Nomad server + client
+- **Bootstrap server**: `claudebox` (100.87.219.108) — Nomad server + client (replaced the
+  long-offline `bigo-server`; kept alive by `scripts/claudebox-server.sh` via user cron)
 - **Worker nodes**: Join via Tailscale, run as Nomad clients
 - **GitOps**: `monad-sync` pulls git every 5 min, drift-detects changed jobs, canary-checks deploys
 - **Service discovery**: Nomad native (no Consul)
@@ -315,28 +316,31 @@ noise while ensuring every problem is git-tracked and visible to the cluster.
 
 | Node | IP | OS | Role | Capabilities |
 |------|----|----|------|-------------|
-| `bigo-server` | 100.78.218.70 | Linux | server + client | Docker, raw_exec, monad-repo volume |
-| `bigo-server-oracle` | 100.119.217.63 | Linux | client | Docker, raw_exec |
-| `death-star` | 100.96.31.66 | Linux | client | Docker, raw_exec |
-| `V1410-1` | 100.75.75.39 | Linux | client | Docker, raw_exec |
-| `windesk` | 100.94.210.54 | Windows | client | raw_exec, Claude Code native |
+| `claudebox` | 100.87.219.108 | Linux | **server + client** | raw_exec, native Claude — the live control plane |
 
-### Offline (potential future nodes)
+> **Control plane note (2026-06-01):** `bigo-server` (100.78.218.70) has been offline ~66
+> days, which is why new nodes could not join. `claudebox` now hosts the Nomad server+client
+> (non-root user process, kept alive by `scripts/claudebox-server.sh` + user cron). All join
+> paths point at `100.87.219.108`. When `bigo-server` returns it can rejoin as a plain client.
+
+### Offline / not-yet-joined (potential nodes — join with `meta/bootstrap/join.sh`)
 
 | Node | IP | OS | Last Seen | Notes |
 |------|----|----|-----------|-------|
-| `eliottdesk` | 100.123.35.50 | Linux | 22d ago | Desktop |
-| `eliotts-mac-mini` | 100.113.252.45 | macOS | 4d ago | Mac Mini |
-| `sdxlemur-2` | 100.91.113.19 | Linux | 4d ago | Recent |
+| `oraclebox1` | 100.125.210.126 | Linux | live (idle) | reachable now — good next node to join |
+| `v1410-1` | 100.75.75.39 | Linux | live (idle) | reachable now — good next node to join |
+| `bigo-server` | 100.78.218.70 | Linux | 66d ago | former server; rejoin as client when back |
+| `death-star` | 100.96.31.66 | Linux | 66d ago | former max-2 compute node |
+| `windesk` | 100.94.210.54 | Windows | recent | native Claude Code |
+| `eliotts-mac-mini` | 100.113.252.45 | macOS | 71d ago | Mac Mini |
 | `pi0`, `pi1` | various | Linux | months | Raspberry Pis |
-| `micro-1..4-google` | various | Linux | ~1y | Google Cloud micros |
 
 ## Adding a New Node
 
 ### Linux
 ```bash
 curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/scripts/setup-node.sh \
-  | sudo bash -s -- client 100.78.218.70
+  | sudo bash -s -- client 100.87.219.108
 ```
 
 ### Windows

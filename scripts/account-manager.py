@@ -26,7 +26,7 @@ from pathlib import Path
 from datetime import datetime
 
 PORT = int(os.environ.get("ACCOUNT_MANAGER_PORT", "7700"))
-NOMAD_ADDR = os.environ.get("NOMAD_ADDR", "http://100.78.218.70:4646")
+NOMAD_ADDR = os.environ.get("NOMAD_ADDR", "http://100.87.219.108:4646")
 NODE_NAME = socket.gethostname()
 
 # Track active login processes

@@ -23,8 +23,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
-SERVER_IP="100.78.218.70"
+NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
+SERVER_IP="100.87.219.108"
 NODE_NAME="$(hostname)"
 LOG_DIR="$REPO_DIR/logs"
 METRICS_FILE="$LOG_DIR/metrics-${NODE_NAME}.csv"

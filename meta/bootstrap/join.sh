@@ -5,7 +5,7 @@
 #   curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh \
 #     | bash -s -- <server-tailscale-ip> <claude-account> [role]
 #
-#   <server-tailscale-ip>  Nomad server to join (default: 100.78.218.70 = bigo-server)
+#   <server-tailscale-ip>  Nomad server to join (default: 100.87.219.108 = claudebox)
 #   <claude-account>       which account this node is logged into: max-1|max-2|max-3|pro
 #   [role]                 client (default) | server
 #
@@ -14,7 +14,7 @@
 # claude login → tag claude_account → node-doctor cron. Result: a full cluster member.
 set -euo pipefail
 
-SERVER_IP="${1:-100.78.218.70}"
+SERVER_IP="${1:-100.87.219.108}"
 CLAUDE_ACCOUNT="${2:-pro}"
 ROLE="${3:-client}"
 REPO_URL="https://github.com/claude-monad/monad.git"
