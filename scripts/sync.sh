@@ -16,7 +16,7 @@ elif [ -d "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.git" ]; then
 else
     REPO_DIR="/home/${USER:-bigo}/monad"
 fi
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
+NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
 export NOMAD_ADDR
 
 JOBS_DIR="$REPO_DIR/jobs"

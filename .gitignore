@@ -4,4 +4,6 @@
 *.swo
 *~
 .DS_Store
-docker/claude
+__pycache__/
+*.pyc
+.vault-data/

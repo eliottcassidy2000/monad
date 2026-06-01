@@ -45,7 +45,7 @@ scrape_configs:
       format: [prometheus]
     static_configs:
       - targets:
-          - 100.78.218.70:4646
+          - 100.87.219.108:4646
           - 100.96.31.66:4646
           - 100.119.217.63:4646
           - 100.75.75.39:4646
@@ -108,7 +108,7 @@ EOT
       }
 
       env {
-        GF_SERVER_ROOT_URL          = "http://100.78.218.70:3000"
+        GF_SERVER_ROOT_URL          = "http://100.87.219.108:3000"
         GF_SECURITY_ALLOW_EMBEDDING = "true"
       }
 
@@ -128,7 +128,7 @@ apiVersion: 1
 datasources:
   - name: Prometheus
     type: prometheus
-    url: http://100.78.218.70:9090
+    url: http://100.87.219.108:9090
     access: proxy
     isDefault: true
     editable: true
