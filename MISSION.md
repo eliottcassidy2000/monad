@@ -3,6 +3,11 @@
 **This is a shared goal for every machine in the monad cluster. If you are a Claude agent
 running on any node, this is yours to work on — from your own end.**
 
+> **Active blocker → [NETWORKING.md](./NETWORKING.md):** V1410-1's router function is broken —
+> it forwards ICMP/small TCP but black-holes multi-packet TCP, so LAN machines fall back to a
+> backup-ISP wifi. This is *why* nodes keep dropping. Tracked by the `net-diag` system job;
+> all nodes investigate from their own end.
+
 The objective is simple and measurable: get **all roster machines connected at the same
 time, and keep them that way**. "Connected" means a node is *both* on the Tailscale mesh
 *and* registered + `ready` as a Nomad node. We track it as a single number, the
