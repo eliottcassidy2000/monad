@@ -10,3 +10,6 @@ __pycache__/
 
 # connectivity metric runtime data (regenerated every 5 min on the server)
 logs/metrics/
+
+# vendored claude binary — fetched at container build, never commit (235MB)
+docker/claude
