@@ -87,11 +87,29 @@ monad gh issues                     # list open issues
 jobs/              — Nomad job specs (source of truth for what runs)
 cluster/           — Config templates for server.hcl, client.hcl, client-windows.hcl
 scripts/           — monad CLI, sync.sh, setup-node.sh, node-doctor.sh, cluster-watchdog.sh
-scripts/prompts/   — Research agent prompt templates (researcher.md, compute.md, reviewer.md)
-scripts/math-session.sh — Shared launcher for all math agent sessions
+scripts/prompts/   — Agent prompt templates (researcher.md, compute.md, reviewer.md, formalizer.md)
+scripts/math-session.sh      — Shared launcher for research/compute/reviewer agent sessions
+scripts/formalizer-session.sh — Launcher for the Lean formalizer agent (clones math-lean)
+meta/              — Platform layer: cluster join, container toolchains, agent coordination
+JOIN.md            — LLM-readable entrypoint for enrolling a new machine
 livestream/        — Livestream system: nginx-rtmp config, restream engine, web dashboard
 logs/              — node-doctor reports, watchdog reports, metrics CSVs, events.jsonl
 ```
+
+## The `meta/` Platform Layer
+
+`meta/` is the layer beneath the agents — how machines join and how agents coordinate. See
+`meta/README.md`. Highlights:
+
+- **Joining**: `meta/bootstrap/join.sh <server-ip> <account>` turns a fresh computer into a
+  full node in one command (Tailscale + toolchains + Nomad client + account tag + cron).
+  `JOIN.md` is an LLM-readable entrypoint — paste this repo to any agent and it knows to join.
+- **Hybrid execution**: Claude stays native (account-pinned); Lean/Python *builds* run in
+  published images (`meta/images/` → GHCR) via `meta/execution/run-in-toolchain.sh`.
+- **Coordination**: `meta/coordination/` (`frontier.py`, `dispatcher.py`, `PROTOCOL.md`)
+  replaces fixed day-of-week rotation with frontier-aware dynamic dispatch so agents direct
+  each other. **Staged rollout — runs `--dry-run` only until validated; the cron rotation
+  keeps running.**
 
 ## Job Spec Conventions
 
@@ -160,6 +178,17 @@ powered by Claude Code instances running as Nomad batch jobs.
   messaging system (`agents/processor.py`), court dispute system, and session logging.
   **All research agents MUST follow it.**
 
+### The Lean Formalization Repo
+
+- **Repo**: `claude-monad/math-lean` — Lean 4 + Mathlib, **formal verification only**.
+- **Purpose**: turn *novel* results from the informal math repo into machine-checked,
+  sorry-free Lean proofs. Its `sync-candidates.sh` pulls targets from `eliottcassidy2000/math`
+  into `candidates/`; the `math-formalizer` agent formalizes them.
+- **Feedback loop**: if a result resists formalization (wrong, under-specified, or a
+  counterexample appears), the formalizer opens a court case back in the informal repo — so
+  formalization actively reconciles the research, it is not a one-way sink.
+- It has its own CLAUDE.md; the formalizer MUST follow it.
+
 ### The Three Research Agents
 
 | Job | Schedule | Node (account) | Role |
@@ -167,6 +196,7 @@ powered by Claude Code instances running as Nomad batch jobs.
 | `math-researcher` | Every 6h | Max account 1 node | Deep research — proves theorems, explores connections, writes up results. Day-of-week rotation covers the full research frontier. |
 | `math-quick-compute` | Every 2h | Max account 2 node | Pure computation — runs scripts, extends sequences, generates data. No theorizing, just crunch numbers. |
 | `math-reviewer` | Daily 3 AM | Max account 3 node | Quality control — verifies results against MISTAKES.md, opens court cases for dubious claims, synthesizes daily progress, coordinates other agents. |
+| `math-formalizer` | Every 4h | Pro account node | Formalization — turns informally-proved results into sorry-free Lean 4 proofs in `claude-monad/math-lean`. Closes the loop: a failed formalization becomes a court case. |
 
 The agents use the math repo's built-in coordination:
 - **Session letters** via `agents/processor.py --send` — structured handoff between sessions
@@ -201,7 +231,7 @@ machine with the right account.
 | Max 1 | Max ($200/mo) | `bigo-server` | math-researcher (deep sessions, needs long context) |
 | Max 2 | Max ($200/mo) | `death-star` | math-quick-compute (heavy computation) |
 | Max 3 | Max ($200/mo) | `bigo-server-oracle` | math-reviewer (daily QC, needs full history) |
-| Pro | Pro ($20/mo) | `windesk` + others | node-doctor (short maintenance sessions) |
+| Pro | Pro ($20/mo) | `windesk` + others | node-doctor (short maintenance) + math-formalizer (light Lean sessions) |
 
 ### How It Works
 
