@@ -6,9 +6,9 @@ Claude agents are the primary operators. Git is the source of truth.
 The cluster's mission is **autonomous pure mathematics research**.
 
 ## Architecture
-- **Bootstrap server**: `claudebox` (100.87.219.108) — Nomad server + client (replaced the
-  long-offline `bigo-server`; kept alive by `scripts/claudebox-server.sh` via user cron)
-- **Worker nodes**: Join via Tailscale, run as Nomad clients
+- **Self-organizing cluster**: Any node can be a server or client — determined automatically at join time
+- **No hardcoded server**: Nodes discover the cluster by scanning the Tailscale network
+- **Auto-scaling servers**: 1 server for ≤2 nodes, 3 for 3-6, 5 for 7+
 - **GitOps**: `monad-sync` pulls git every 5 min, drift-detects changed jobs, canary-checks deploys
 - **Service discovery**: Nomad native (no Consul)
 - **Networking**: All inter-node traffic over Tailscale
@@ -88,29 +88,10 @@ monad gh issues                     # list open issues
 jobs/              — Nomad job specs (source of truth for what runs)
 cluster/           — Config templates for server.hcl, client.hcl, client-windows.hcl
 scripts/           — monad CLI, sync.sh, setup-node.sh, node-doctor.sh, cluster-watchdog.sh
-scripts/prompts/   — Agent prompt templates (researcher.md, compute.md, reviewer.md, formalizer.md)
-scripts/math-session.sh      — Shared launcher for research/compute/reviewer agent sessions
-scripts/formalizer-session.sh — Launcher for the Lean formalizer agent (clones math-lean)
-meta/              — Platform layer: cluster join, container toolchains, agent coordination
-JOIN.md            — LLM-readable entrypoint for enrolling a new machine
-livestream/        — Livestream system: nginx-rtmp config, restream engine, web dashboard
+scripts/prompts/   — Research agent prompt templates (researcher.md, compute.md, reviewer.md)
+scripts/math-session.sh — Shared launcher for all math agent sessions
 logs/              — node-doctor reports, watchdog reports, metrics CSVs, events.jsonl
 ```
-
-## The `meta/` Platform Layer
-
-`meta/` is the layer beneath the agents — how machines join and how agents coordinate. See
-`meta/README.md`. Highlights:
-
-- **Joining**: `meta/bootstrap/join.sh <server-ip> <account>` turns a fresh computer into a
-  full node in one command (Tailscale + toolchains + Nomad client + account tag + cron).
-  `JOIN.md` is an LLM-readable entrypoint — paste this repo to any agent and it knows to join.
-- **Hybrid execution**: Claude stays native (account-pinned); Lean/Python *builds* run in
-  published images (`meta/images/` → GHCR) via `meta/execution/run-in-toolchain.sh`.
-- **Coordination**: `meta/coordination/` (`frontier.py`, `dispatcher.py`, `PROTOCOL.md`)
-  replaces fixed day-of-week rotation with frontier-aware dynamic dispatch so agents direct
-  each other. **Staged rollout — runs `--dry-run` only until validated; the cron rotation
-  keeps running.**
 
 ## Job Spec Conventions
 
@@ -120,47 +101,6 @@ logs/              — node-doctor reports, watchdog reports, metrics CSVs, even
 - Constrain server-only tasks: `attribute = "${meta.role}"` / `value = "server"`
 - Resource limits on every task (cpu + memory)
 - Use Docker driver for application workloads, raw_exec for system tasks and Claude sessions
-
----
-
-## Livestream System
-
-Multi-platform restreaming service running on `bigo-server-oracle` (best bandwidth).
-
-### Architecture
-```
-OBS → rtmp://<tailscale-ip>:1935/live/<key>  →  nginx-rtmp (ingest)
-                                                       ↓
-                                              FFmpeg compositor/switcher
-                                                       ↓
-                                              ┌────────┼────────┐
-                                              YouTube   Twitch   (future)
-```
-
-### Dashboard
-Web control panel at `http://<bigo-server-oracle>:8080` on the Tailnet:
-- View active ingest streams and composite preview (HLS)
-- Select which sources go into the composite
-- Choose layout: single, side-by-side, picture-in-picture
-- Configure and start/stop per-platform restreaming
-- Set stream keys for YouTube and Twitch
-
-### CLI Control
-```bash
-monad stream status              # show livestream system status
-monad stream go-live             # start compositor + all outputs
-monad stream stop                # stop all streaming
-monad stream dashboard           # print dashboard URL
-monad stream key youtube <key>   # set YouTube stream key
-monad stream key twitch <key>    # set Twitch stream key
-```
-
-### OBS Setup
-In OBS streaming settings:
-- **Server**: `rtmp://<bigo-server-oracle-tailscale-ip>:1935/live`
-- **Stream Key**: any name (`cam1`, `screen`, `main`, etc.)
-
-Multiple OBS instances can stream to different keys simultaneously.
 
 ---
 
@@ -179,17 +119,6 @@ powered by Claude Code instances running as Nomad batch jobs.
   messaging system (`agents/processor.py`), court dispute system, and session logging.
   **All research agents MUST follow it.**
 
-### The Lean Formalization Repo
-
-- **Repo**: `claude-monad/math-lean` — Lean 4 + Mathlib, **formal verification only**.
-- **Purpose**: turn *novel* results from the informal math repo into machine-checked,
-  sorry-free Lean proofs. Its `sync-candidates.sh` pulls targets from `eliottcassidy2000/math`
-  into `candidates/`; the `math-formalizer` agent formalizes them.
-- **Feedback loop**: if a result resists formalization (wrong, under-specified, or a
-  counterexample appears), the formalizer opens a court case back in the informal repo — so
-  formalization actively reconciles the research, it is not a one-way sink.
-- It has its own CLAUDE.md; the formalizer MUST follow it.
-
 ### The Three Research Agents
 
 | Job | Schedule | Node (account) | Role |
@@ -197,7 +126,6 @@ powered by Claude Code instances running as Nomad batch jobs.
 | `math-researcher` | Every 6h | Max account 1 node | Deep research — proves theorems, explores connections, writes up results. Day-of-week rotation covers the full research frontier. |
 | `math-quick-compute` | Every 2h | Max account 2 node | Pure computation — runs scripts, extends sequences, generates data. No theorizing, just crunch numbers. |
 | `math-reviewer` | Daily 3 AM | Max account 3 node | Quality control — verifies results against MISTAKES.md, opens court cases for dubious claims, synthesizes daily progress, coordinates other agents. |
-| `math-formalizer` | Every 4h | Pro account node | Formalization — turns informally-proved results into sorry-free Lean 4 proofs in `claude-monad/math-lean`. Closes the loop: a failed formalization becomes a court case. |
 
 The agents use the math repo's built-in coordination:
 - **Session letters** via `agents/processor.py --send` — structured handoff between sessions
@@ -221,42 +149,15 @@ The agents use the math repo's built-in coordination:
 
 ## Account Architecture
 
-Claude Code uses your subscription directly — no API keys needed. Each machine logs
-into one Anthropic account via `claude` CLI, and jobs are constrained to run on the
-machine with the right account.
-
-### The 4 Accounts
-
-| Account | Type | Node | Purpose |
-|---------|------|------|---------|
-| Max 1 | Max ($200/mo) | `bigo-server` | math-researcher (deep sessions, needs long context) |
-| Max 2 | Max ($200/mo) | `death-star` | math-quick-compute (heavy computation) |
-| Max 3 | Max ($200/mo) | `bigo-server-oracle` | math-reviewer (daily QC, needs full history) |
-| Pro | Pro ($20/mo) | `windesk` + others | node-doctor (short maintenance) + math-formalizer (light Lean sessions) |
+Claude Code uses your subscription directly — no API keys needed. All nodes share
+a single Max account, logged in via `claude` CLI.
 
 ### How It Works
 
-1. On each node, run `claude` and log in once with the assigned account
-2. Jobs use `constraint { attribute = "${meta.claude_account}" }` to land on the right node
-3. Each node's Nomad config sets `meta { claude_account = "max-1" }` (or `max-2`, `max-3`, `pro`)
-4. No API keys, no Nomad variables, no key-ring — the CLI just uses the logged-in account
-
-### Setup per Node
-
-```bash
-# 1. Log in to Claude with the assigned account
-claude
-
-# 2. Add to the node's Nomad config (client.meta block):
-#    claude_account = "max-1"   # or max-2, max-3, pro
-#    Then restart Nomad to pick up the new meta.
-```
-
-### Rate Limit Isolation
-
-Each Max account has independent rate limits. By pinning each job type to a
-different account's node, the researcher never competes with the compute agent
-for quota. The Pro account is only used for short node-doctor sessions (~3/day).
+1. On each node, run `claude` and log in with the shared Max account
+2. Each node's Nomad config sets `meta { claude_account = "max" }`
+3. No API keys, no Nomad variables, no key-ring — the CLI just uses the logged-in account
+4. The join script handles account tagging automatically
 
 ---
 
@@ -269,7 +170,7 @@ node-doctor can.
 ### What It Checks
 
 1. **Tailscale connectivity** — can we reach the mesh?
-2. **Nomad server reachability** — can we reach bigo-server:4646?
+2. **Nomad server reachability** — can we reach any cluster server? (auto-discovered via Tailscale)
 3. **Nomad agent health** — is the local agent running and eligible?
 4. **Git state** — is the repo clean, up to date, no conflicts?
 5. **Disk space** — with **trend analysis** predicting when disks will fill
@@ -314,44 +215,31 @@ noise while ensuring every problem is git-tracked and visible to the cluster.
 
 ## Nodes
 
+Nodes self-register via `join.sh`. The cluster discovers topology automatically via Tailscale.
+
 | Node | IP | OS | Role | Capabilities |
 |------|----|----|------|-------------|
-| `claudebox` | 100.87.219.108 | Linux | **server + client** | raw_exec, native Claude — the live control plane |
+| `V1410-1` | 100.75.75.39 | Linux | server + client (leader) | Docker, raw_exec |
 
-> **Control plane note (2026-06-01):** `bigo-server` (100.78.218.70) has been offline ~66
-> days, which is why new nodes could not join. `claudebox` now hosts the Nomad server+client
-> (non-root user process, kept alive by `scripts/claudebox-server.sh` + user cron). All join
-> paths point at `100.87.219.108`. When `bigo-server` returns it can rejoin as a plain client.
-
-### Offline / not-yet-joined (potential nodes — join with `meta/bootstrap/join.sh`)
-
-| Node | IP | OS | Last Seen | Notes |
-|------|----|----|-----------|-------|
-| `oraclebox1` | 100.125.210.126 | Linux | live (idle) | reachable now — good next node to join |
-| `v1410-1` | 100.75.75.39 | Linux | live (idle) | reachable now — good next node to join |
-| `bigo-server` | 100.78.218.70 | Linux | 66d ago | former server; rejoin as client when back |
-| `death-star` | 100.96.31.66 | Linux | 66d ago | former max-2 compute node |
-| `windesk` | 100.94.210.54 | Windows | recent | native Claude Code |
-| `eliotts-mac-mini` | 100.113.252.45 | macOS | 71d ago | Mac Mini |
-| `pi0`, `pi1` | various | Linux | months | Raspberry Pis |
+Other machines on the tailnet can join by running `join.sh` — they'll auto-discover this server.
 
 ## Adding a New Node
 
-### Linux
+One command — the script auto-discovers the cluster (or bootstraps a new one):
+
+### Linux / macOS
 ```bash
-curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/scripts/setup-node.sh \
-  | sudo bash -s -- client 100.87.219.108
+curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh | bash
 ```
 
-### Windows
-```powershell
-scoop install nomad
-mkdir C:\nomad\config C:\nomad\data
-# Copy cluster/client-windows.hcl → C:\nomad\config\nomad.hcl, fill in your Tailscale IP
-nomad agent -config=C:\nomad\config\nomad.hcl
-```
+The script:
+1. Ensures Tailscale is up
+2. Scans the tailnet for existing Nomad servers
+3. If a cluster exists → joins it (as server or client, auto-decided based on cluster size)
+4. If no cluster exists → bootstraps a new single-server cluster
+5. Installs toolchains, Claude CLI check, node-doctor cron
+
+No server IP needed. No role selection needed. The cluster self-organizes.
 
 ### After joining
-1. Install Claude Code CLI on the node
-2. Set up node-doctor cron (see Self-Healing section)
-3. Verify: `monad nomad nodes` should show the new node as `ready`
+Verify: `monad nomad nodes` should show the new node as `ready`

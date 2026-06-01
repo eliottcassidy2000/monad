@@ -23,8 +23,28 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
-SERVER_IP="100.87.219.108"
+# Auto-discover: use local Nomad if running, otherwise find a server on the tailnet
+MY_TS_IP="$(tailscale ip -4 2>/dev/null | head -1 || echo "127.0.0.1")"
+if curl -s --connect-timeout 2 "http://${MY_TS_IP}:4646/v1/status/leader" >/dev/null 2>&1; then
+  NOMAD_ADDR="${NOMAD_ADDR:-http://${MY_TS_IP}:4646}"
+  SERVER_IP="$MY_TS_IP"
+else
+  # Scan tailnet peers for a reachable Nomad server
+  SERVER_IP=""
+  for ip in $(tailscale status 2>/dev/null | grep -v offline | grep -v '^#' | awk '/^100\./{print $1}'); do
+    [ "$ip" = "$MY_TS_IP" ] && continue
+    if curl -s --connect-timeout 2 "http://${ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+      SERVER_IP="$ip"
+      break
+    fi
+  done
+  if [ -n "$SERVER_IP" ]; then
+    NOMAD_ADDR="${NOMAD_ADDR:-http://${SERVER_IP}:4646}"
+  else
+    NOMAD_ADDR="${NOMAD_ADDR:-http://${MY_TS_IP}:4646}"
+    SERVER_IP="$MY_TS_IP"
+  fi
+fi
 NODE_NAME="$(hostname)"
 LOG_DIR="$REPO_DIR/logs"
 METRICS_FILE="$LOG_DIR/metrics-${NODE_NAME}.csv"
