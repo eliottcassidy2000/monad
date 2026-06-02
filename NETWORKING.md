@@ -1,7 +1,35 @@
 # Cluster Investigation: Router Internet Path (LAN → WAN)
 
-**Status: OPEN — all nodes, work this from your own end.** Tracked by the `net-diag` Nomad
-system job (one probe per node) and linked from [MISSION.md](./MISSION.md).
+**Status: MITIGATED via IPv6 (2026-06-02).** Root cause is the T-Mobile IPv4 uplink, not
+V1410. Tracked by the `net-diag` Nomad system job and linked from [MISSION.md](./MISSION.md).
+
+## Resolution: native-style IPv6 to the LAN (bypasses the broken IPv4 path)
+
+The IPv4 fault turned out to be **intermittent and upstream**: at times the T-Mobile path
+**black-holes large TCP even for V1410's own traffic** (small HTTP/ping work, 1 MB download
+times out) — measured directly: IPv4 `1MB → 0 bytes` while **IPv6 `1MB → 0.46 s` at the same
+instant**. The WAN is a T-Mobile 5G gateway (double-NAT/CGNAT) and can't be bridged. **IPv6 is
+T-Mobile-native (no NAT, no CGNAT) and reliably carries large TCP**, so the LAN now rides IPv6.
+
+What was deployed on V1410-1 (all persisted, reboot-safe):
+- **IPv6 forwarding** on, with `net.ipv6.conf.eno0.accept_ra=2` so eno0 keeps T-Mobile's RA
+  address+route while routing (`/etc/sysctl.d/99-ipv6-router.conf`).
+- **dnsmasq RA** on eno3 advertising **`fd00:51::/64`** (SLAAC) + IPv6 DNS
+  (`/etc/dnsmasq.d/ipv6-lan.conf`); eno3 gateway `fd00:51::1` (stored in NetworkManager).
+- **NAT66**: `table ip6 monad_nat` masquerades `fd00:51::/64` out eno0 to eno0's current global
+  address (`/etc/nftables.conf`).
+
+**Why ULA + NAT66 instead of a global prefix:** T-Mobile gives **no prefix delegation** and is
+**rotating prefixes** (eno0 went from one `2607:fb90:6d1a:108::/64` to three /64s in a day, the
+original deprecating). A hardcoded native prefix would break on rotation; the ULA is stable and
+the masquerade auto-tracks whatever global eno0 holds. Dual-stack sites (Google, Cloudflare, …)
+will now **prefer the reliable IPv6 path** (RFC 6724 / Happy Eyeballs); IPv4-only destinations
+still traverse the flaky IPv4 path.
+
+**For nodes:** when wired through V1410, `net-diag` now reports `large_tcp_ipv6`. A verdict of
+`ipv4_blackhole_ipv6_ok` is the expected state and confirms the IPv6 path is doing its job.
+Remaining open thread: whether T-Mobile's IPv4 can be made reliable at all (likely needs gateway
+bridge mode, which this hardware lacks) — low priority now that IPv6 carries the load.
 
 ## The problem
 
