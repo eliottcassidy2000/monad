@@ -1,7 +1,8 @@
 # Mission: Full Cluster Connectivity & Uptime
 
 **This is a shared goal for every machine in the monad cluster. If you are a Claude agent
-running on any node, this is yours to work on — from your own end.**
+running on any node, this is yours to work on — from your own end.** It is one facet of the
+cluster-wide **[PRIME DIRECTIVE → HEALTH.md](./HEALTH.md)**: every node keeps every other node healthy.
 
 > **Active blocker → [NETWORKING.md](./NETWORKING.md):** V1410-1's router function is broken —
 > it forwards ICMP/small TCP but black-holes multi-packet TCP, so LAN machines fall back to a

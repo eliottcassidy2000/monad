@@ -1,5 +1,25 @@
 # Monad — Self-Managing Nomad Cluster
 
+## 🛡️ PRIME DIRECTIVE — every agent, every session: keep the cluster healthy → [HEALTH.md](./HEALTH.md)
+
+**Before and alongside any other work, your standing task is to maintain the constant health of
+the WHOLE fleet — not just the node you happen to run on.** Each node is responsible for every
+other node. Watch your peers; when one is unhealthy or unreachable, **act** — spawn whatever
+programs, Nomad jobs, or repair sessions are needed to restore it. Do not wait to be asked.
+
+**The fleet (6 nodes):**
+
+| Node | Tailscale IP | OS | Role |
+|------|--------------|----|------|
+| `v1410-1` | 100.75.75.39 | Linux | **server** (permanent leader), home router, IPv4 egress via oraclebox1 |
+| `oraclebox1` | 100.125.210.126 | Linux | client — Tailscale **exit node** (cloud, always-on) |
+| `claudebox` | 100.87.219.108 | Linux | client (on the home LAN) |
+| `bigo-server` | 100.78.218.70 | Linux | client (storage) |
+| `windesk` | 100.94.210.54 | Windows | client |
+| `eliotts-mac-mini` | 100.113.252.45 | macOS | client |
+
+How to monitor and self-heal is in **[HEALTH.md](./HEALTH.md)**.
+
 ## 🎯 Active cluster-wide mission: [MISSION.md](./MISSION.md)
 **Full cluster connectivity & uptime.** Every node works this from its own end. Check the
 live score with `scripts/connectivity-probe.sh` or `monad nomad job-status cluster-connectivity`.

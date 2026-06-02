@@ -27,9 +27,11 @@ mkdir -p "$METRICS_DIR"
 # Agents: add your machine here (and commit) so it's counted toward the cluster uptime metric.
 ROSTER=$(cat <<'EOF'
 V1410-1	100.75.75.39
+oraclebox1	100.125.210.126
 claudebox	100.87.219.108
-eliotts-mac-mini	100.113.252.45
+bigo-server	100.78.218.70
 windesk	100.94.210.54
+eliotts-mac-mini	100.113.252.45
 EOF
 )
 
