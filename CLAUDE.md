@@ -15,6 +15,7 @@ programs, Nomad jobs, or repair sessions are needed to restore it. Do not wait t
 | `oraclebox1` | 100.125.210.126 | Linux | client — Tailscale **exit node** (cloud, always-on) |
 | `claudebox` | 100.87.219.108 | Linux | client (on the home LAN) |
 | `bigo-server` | 100.78.218.70 | Linux | client (storage) |
+| `death-star` | 100.96.31.66 | Linux | client (storage, home LAN) — **onboarding, see HEALTH.md** |
 | `windesk` | 100.94.210.54 | Windows | client |
 | `eliotts-mac-mini` | 100.113.252.45 | macOS | client |
 

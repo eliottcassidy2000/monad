@@ -1,7 +1,36 @@
 # Cluster Investigation: Router Internet Path (LAN → WAN)
 
-**Status: MITIGATED via IPv6 (2026-06-02).** Root cause is the T-Mobile IPv4 uplink, not
-V1410. Tracked by the `net-diag` Nomad system job and linked from [MISSION.md](./MISSION.md).
+**Status: RESOLVED (2026-06-03) — native IPv4 fixed with an MSS clamp; no exit node needed.**
+Tracked by the `net-diag` Nomad system job and linked from [MISSION.md](./MISSION.md).
+
+## Resolution: native IPv4 via MSS clamp (the real "HTTP works, HTTPS doesn't" fix)
+
+The decisive clue was **HTTP works but HTTPS hangs** (ping + basic curl fine, no web pages).
+That is the textbook signature of an **MTU / PMTUD black hole**, not a dead uplink:
+
+- The T-Mobile WAN (`eno0`) MTU is **1472**; LAN clients are **1500** (and storage boxes like
+  `death-star` may use **9000** jumbo frames).
+- A 1500-MTU client advertises **MSS 1460**, so servers send 1500-byte packets. The small TLS
+  ClientHello/HTTP request gets through, but the **multi-packet TLS certificate** overflows the
+  1472 WAN and is **dropped upstream with no ICMP "frag-needed"** → PMTUD never kicks in → the
+  handshake stalls. HTTP (tiny responses) survives; HTTPS dies.
+- The router's *own* traffic works because it already uses MSS 1432 (its 1472 MTU).
+
+**Fix (V1410-1, persisted + reboot-safe in `/etc/nftables.conf`):** a dedicated
+`table inet monad_mss` with a `forward` hook clamps every forwarded TCP SYN's MSS to the egress
+route MTU. Verified on the wire: a client's `mss 1460` leaves `eno0` rewritten to **`mss 1432`**,
+so server packets fit the whole path. This is independent of PMTUD and works for any client MTU
+(including jumbo). HTTPS now works **natively** for LAN clients — IPv4 and IPv6 both carry 1 MB
+downloads from the router and from a forwarded client.
+
+**The oraclebox1 exit node is no longer used** (it was a stop-gap that routed everything through
+Chicago). It remains available as a manual fallback (`tailscale set --exit-node=oraclebox1`), but
+the default is the native path. The earlier exit-node scaffolding (tailscale0 SNAT, the v6-native
+ip rule + systemd unit) has been removed. The IPv6 setup below is unchanged and still native.
+
+---
+
+### Earlier mitigation (still in place): native IPv6 to the LAN
 
 ## Resolution: native-style IPv6 to the LAN (bypasses the broken IPv4 path)
 
