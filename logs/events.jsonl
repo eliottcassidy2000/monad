@@ -1,1 +1,479 @@
 {"ts":"2026-03-26T15:21:46Z","node":"death-star","source":"deploy","action":"postgres","result":"ok","detail":"deployed (no git changes)"}
+{"ts": "epoch:1780353096", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=mesh"}
+{"ts": "epoch:1780353125", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=mesh"}
+{"ts": "epoch:1780353300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780353600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780353900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780354200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780354500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780354800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780355100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780355400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780355700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780356000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780356300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780356600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780356901", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780357200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780357500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780357800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780358100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780358400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780358700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780359000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780359300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780359600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780359900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780360200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780360500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780360800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780361100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780361400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780361700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780362000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780362300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780362600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780362900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780363200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780363500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780363800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780364100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780364400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780364700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780365000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780365300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780365600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780365900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780366200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780366500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780366800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780367100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780367400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780367700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780368000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780368300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780368600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780368900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780369201", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780369500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780369800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780370100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780370400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780370700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780371000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780371300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780371600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780371900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780372200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780372500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780372800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=mesh"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780373100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780373400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780373700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780374000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780374300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780374600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780374900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780375200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780375500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780375800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780376100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780376400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780376700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780377001", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780377300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780377600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780377900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780378200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780378500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780378800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780379100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780379400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780379700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780380000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780380300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780380600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780380900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780381200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780381500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780381800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780382100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780382400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780382700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780383000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780383300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780383600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780383900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780384200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780384500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780384800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780385100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780385400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780385700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780386000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780386300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780386600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780386900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780387200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780387500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780387800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780388100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780388400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780388700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780389000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780389300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780389600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780389900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780390200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780390500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780390800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780391100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780391400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780391700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780392000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780392300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780392600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780392900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780393200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780393500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780393800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780394100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780394400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780394700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780395000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780395300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780395600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780395900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780396200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780396500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780396800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780397100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780397400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780397700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780398000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780398300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780398600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780398900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780399200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780399500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780399800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780400100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780400400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780400703", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780401000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780401300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780401600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780401900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780402200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780402500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780402800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780403100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780403400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780403700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780404000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780404300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780404600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780404900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780405200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780405500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780405800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780406100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780406400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780406700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780407000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780407300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780407600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780407900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780408200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780408500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780408800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780409100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780409400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780409700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780410000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780410300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780410600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=mesh"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780410900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780411200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780411500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780411800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780412100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780412400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780412700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780413000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780413300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780413601", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780413900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780414200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780414500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780414800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780415100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780415400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780415700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780416000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780416300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780416600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780416900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780417200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780417500", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780417800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780418100", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780418400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780418700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780419000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780419300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780419600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780419905", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780420205", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780420508", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780420806", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large=yes pmtu=1460"}
+{"ts": "epoch:1780421105", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ipv4_blackhole_ipv6_ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=no large_v6=yes pmtu=1460"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ipv4_blackhole_ipv6_ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=no large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780421407", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780421706", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ipv4_blackhole_ipv6_ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=no large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780422005", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780422307", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ipv4_blackhole_ipv6_ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=no large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780422608", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780422905", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780423205", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780423505", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780423806", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780424106", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780424406", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780424705", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780425018", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780425307", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780425610", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780425910", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780426279", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780426514", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780426812", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780427106", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780427413", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780427705", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780428011", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780428308", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780428607", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780428905", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780429213", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780429505", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780429806", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780430135", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780430401", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780430713", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780431040", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780431306", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780431617", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780431908", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780432201", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780432501", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780432811", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780433108", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts": "epoch:1780433408", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=mesh, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=0"}
+{"ts": "epoch:1780433706", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780434084", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780434362", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780434648", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=off, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1268"}
+{"ts": "epoch:1780434928", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "down", "detail": "0/4 connected (0.0%); V1410-1=mesh, claudebox=mesh, eliotts-mac-mini=mesh, windesk=mesh"}
+{"ts": "epoch:1780435207", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780435507", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780435806", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=off, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780436105", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780436400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780436700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780437000", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780437300", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "3/4 connected (75.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=up"}
+{"ts": "epoch:1780437600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=up, windesk=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780437900", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "1/4 connected (25.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=off"}
+{"ts": "epoch:1780438208", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "2/4 connected (50.0%); V1410-1=up, claudebox=mesh, eliotts-mac-mini=off, windesk=up"}
+{"ts": "epoch:1780438261", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "4/6 connected (66.7%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=off"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780438511", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "4/6 connected (66.7%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=off"}
+{"ts": "epoch:1780438800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780439105", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "4/6 connected (66.7%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=off"}
+{"ts": "epoch:1780439400", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780439754", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780440023", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780440314", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "4/6 connected (66.7%); V1410-1=off, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=0"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=no large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780441230", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780442109", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780442559", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780442606", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780442712", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=no pmtu=1268"}
+{"ts": "epoch:1780443015", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780443306", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780443619", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/6 connected (83.3%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780443917", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "5/7 connected (71.4%); V1410-1=up, oraclebox1=up, claudebox=mesh, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780444200", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780444504", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780444805", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780445104", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780445405", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780445700", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780446005", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780446305", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780446600", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780446905", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780447205", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780447515", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "partial", "detail": "6/7 connected (85.7%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=mesh, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780447800", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780448120", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780448411", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780448705", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"probe","node":"V1410-1","source":"net-diag","action":"probe","result":"ok","detail":"gw=192.168.225.1 via_v1410=no ping=yes small=yes large_v4=yes large_v6=yes pmtu=1460"}
+{"ts": "epoch:1780449007", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts": "epoch:1780449307", "node": "V1410-1", "source": "connectivity", "action": "probe", "result": "full", "detail": "7/7 connected (100.0%); V1410-1=up, oraclebox1=up, claudebox=up, bigo-server=up, death-star=up, windesk=up, eliotts-mac-mini=up"}
+{"ts":"20260602-191425","node":"V1410-1","source":"cap-test","action":"dual-math","result":"both_ok","detail":"claude=ok/126s codex=ok/35s"}
