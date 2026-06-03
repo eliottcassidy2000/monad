@@ -1,0 +1,18 @@
+[Unit]
+Description=Monad Codex watcher %i (3-instance quorum supervisor)
+After=network-online.target nomad.service tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=e
+Environment=HOME=/home/e
+Environment=MONAD_REPO_DIR=/home/e/monad
+Environment=WATCHER_MODEL=gpt-5.4-mini
+Environment=WATCHER_EFFORT=low
+ExecStart=/home/e/monad/scripts/watcher.sh %i
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

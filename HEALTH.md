@@ -68,6 +68,31 @@ Keep this roster in sync with `scripts/connectivity-probe.sh` (the metric reads 
 - This directive **composes with** [MISSION.md](./MISSION.md) (connectivity & uptime) and
   [NETWORKING.md](./NETWORKING.md) (the internet path) — those are facets of cluster health.
 
+## The Watcher Quorum — 3 ever-present Codex supervisors
+
+A standing **trio of Codex watcher instances** (`monad-watcher@1`, `@2`, `@3`) enforces this
+directive continuously on the always-on server. They are the cluster's heartbeat-level
+supervisor.
+
+- **Ever-present:** each runs under systemd with `Restart=always` (crashes self-heal in ~10s).
+- **Quorum + mutual supervision:** the three heartbeat to `~/.monad/watchers/`, leader-elect
+  (lowest live id), and **restart any peer that stops heartbeating** (covers a hung or stopped
+  peer that systemd wouldn't catch). Quorum is healthy at ≥2 live.
+- **The brain is Codex** (`gpt-5.4-mini`, low effort — older/cheaper, tunable via `WATCHER_MODEL`
+  / `WATCHER_EFFORT` in the unit). Each cycle (~120s) the **leader** runs a Codex pass that reads
+  `nomad job status` and **restarts any down service/LLM instance** (`nomad job restart`);
+  **followers** verify and stay hands-off so the three never restart the same thing at once.
+- **Reports** every cycle to `logs/events.jsonl` (`source:"watcher-N"`); the last Codex output
+  per watcher is in `~/.monad/watchers/watcher-N.lastrun`.
+
+**Install / refresh on a node:** `scripts/install-watchers.sh` (unit template in
+`cluster/monad-watcher@.service`, loop in `scripts/watcher.sh`, prompt in
+`scripts/prompts/watcher.md`). Currently running on `v1410-1`.
+
+> Note: a watcher can only restart services that are *defined* (Nomad jobs). If an expected LLM
+> instance like `cluster-operator` is **absent** (no job at all), the watcher reports it missing
+> rather than restarting a phantom — defining/redeploying it is a separate maintainer task.
+
 ## Active Projects
 
 ### 🟡 Onboard `death-star` (storage node) — get it fully functional
