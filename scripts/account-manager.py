@@ -26,7 +26,40 @@ from pathlib import Path
 from datetime import datetime
 
 PORT = int(os.environ.get("ACCOUNT_MANAGER_PORT", "7700"))
-NOMAD_ADDR = os.environ.get("NOMAD_ADDR", "http://100.87.219.108:4646")
+def _discover_nomad_addr():
+    """Auto-discover Nomad server via Tailscale."""
+    import subprocess
+    try:
+        my_ip = subprocess.check_output(["tailscale", "ip", "-4"], text=True).strip().split("\n")[0]
+    except Exception:
+        my_ip = "127.0.0.1"
+    import urllib.request
+    try:
+        urllib.request.urlopen(f"http://{my_ip}:4646/v1/status/leader", timeout=2)
+        return f"http://{my_ip}:4646"
+    except Exception:
+        pass
+    try:
+        lines = subprocess.check_output(["tailscale", "status"], text=True).split("\n")
+        for line in lines:
+            if "offline" in line.lower() or line.startswith("#") or not line.strip():
+                continue
+            parts = line.split()
+            if not parts or not parts[0].startswith("100."):
+                continue
+            ip = parts[0]
+            if ip == my_ip:
+                continue
+            try:
+                urllib.request.urlopen(f"http://{ip}:4646/v1/status/leader", timeout=2)
+                return f"http://{ip}:4646"
+            except Exception:
+                continue
+    except Exception:
+        pass
+    return f"http://{my_ip}:4646"
+
+NOMAD_ADDR = os.environ.get("NOMAD_ADDR") or _discover_nomad_addr()
 NODE_NAME = socket.gethostname()
 
 # Track active login processes

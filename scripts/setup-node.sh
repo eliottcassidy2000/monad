@@ -6,7 +6,18 @@
 set -euo pipefail
 
 ROLE="${1:-client}"
-SERVER_IP="${2:-100.87.219.108}"
+SERVER_IP="${2:-}"
+# Auto-discover server if not provided
+if [ -z "$SERVER_IP" ]; then
+  MY_TS_IP="$(tailscale ip -4 2>/dev/null | head -1 || echo "")"
+  for ip in $(tailscale status 2>/dev/null | grep -v offline | grep -v '^#' | awk '/^100\./{print $1}'); do
+    [ "$ip" = "$MY_TS_IP" ] && continue
+    if curl -s --connect-timeout 2 "http://${ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+      SERVER_IP="$ip"; break
+    fi
+  done
+  SERVER_IP="${SERVER_IP:-${MY_TS_IP:-127.0.0.1}}"
+fi
 NODE_NAME="$(hostname)"
 MONAD_DIR="${MONAD_DIR:-/home/${SUDO_USER:-$(whoami)}/monad}"
 

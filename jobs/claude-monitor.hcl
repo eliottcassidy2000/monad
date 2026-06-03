@@ -24,7 +24,7 @@ job "claude-monitor" {
       }
 
       env {
-        NOMAD_ADDR = "http://100.78.218.70:4646"
+        NOMAD_ADDR = "http://${attr.unique.network.ip-address}:4646"
         HOME       = "/home/e"
         PATH       = "/home/e/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       }

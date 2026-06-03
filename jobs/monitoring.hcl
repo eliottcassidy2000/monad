@@ -45,11 +45,7 @@ scrape_configs:
       format: [prometheus]
     static_configs:
       - targets:
-          - 100.87.219.108:4646
-          - 100.96.31.66:4646
-          - 100.119.217.63:4646
-          - 100.75.75.39:4646
-          - 100.94.210.54:4646
+          - {{ env "attr.unique.network.ip-address" }}:4646
         labels:
           cluster: monad
 
@@ -108,7 +104,7 @@ EOT
       }
 
       env {
-        GF_SERVER_ROOT_URL          = "http://100.87.219.108:3000"
+        GF_SERVER_ROOT_URL          = "http://${attr.unique.network.ip-address}:3000"
         GF_SECURITY_ALLOW_EMBEDDING = "true"
       }
 
@@ -128,7 +124,7 @@ apiVersion: 1
 datasources:
   - name: Prometheus
     type: prometheus
-    url: http://100.87.219.108:9090
+    url: http://{{ env "NOMAD_IP_prometheus" }}:{{ env "NOMAD_PORT_prometheus" }}
     access: proxy
     isDefault: true
     editable: true

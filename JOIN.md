@@ -5,8 +5,8 @@
 
 You are about to enroll the computer you are running on as a node in the **monad** cluster —
 a Tailscale-networked, Nomad-scheduled fleet of Claude agents doing autonomous pure-math
-research. Your job is to run one bootstrap command, help the human through two interactive
-logins, and verify the node is live.
+research. Your job is to run one bootstrap command, help the human through interactive
+logins if needed, and verify the node is live.
 
 ---
 
@@ -15,21 +15,17 @@ logins, and verify the node is live.
 On macOS or Linux, run this (it is idempotent — safe to re-run):
 
 ```bash
-curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh \
-  | bash -s -- <SERVER_IP> <CLAUDE_ACCOUNT>
+curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh | bash
 ```
 
-- `<SERVER_IP>` — the Nomad server's Tailscale IP. **Default: `100.87.219.108`** (claudebox).
-  Use the default unless the human gives you another.
-- `<CLAUDE_ACCOUNT>` — which Anthropic account this machine logs into: `max-1`, `max-2`,
-  `max-3`, or `pro`. **Ask the human which one** (it determines what work this node runs).
-  If they don't know, use `pro`.
+That's it. **No server IP needed. No role selection needed.** The script:
+1. Ensures Tailscale is up on this machine
+2. Scans the Tailscale network for an existing Nomad cluster
+3. If a cluster exists → joins it (as server or client, auto-decided)
+4. If no cluster exists → bootstraps a new single-server cluster
+5. Installs toolchains, sets up node-doctor cron, verifies health
 
-Example with defaults:
-```bash
-curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh \
-  | bash -s -- 100.87.219.108 pro
-```
+The cluster self-organizes: server count scales automatically (1 for ≤2 nodes, 3 for 3-6, 5 for 7+).
 
 On **Windows**, do not use the command above. See [§ Windows](#windows) below.
 
@@ -38,19 +34,13 @@ On **Windows**, do not use the command above. See [§ Windows](#windows) below.
 ## What you should actually do (step by step)
 
 1. **Detect the OS.** `uname -s` → `Linux` / `Darwin` (macOS) / `MINGW*`/`MSYS*` (Windows).
-2. **Ask the human two things** (only if not already told): the server IP (default
-   `100.87.219.108`) and which Claude account this machine uses (`max-1/2/3/pro`).
-3. **Run the bootstrap command** above. It installs Tailscale, the toolchains (Lean,
-   Python, a container runtime, the Claude CLI), the Nomad client, and the self-healing cron.
-   It is safe to re-run if a step needs the human to finish a login first.
-4. **Help the human finish the two interactive logins** the script cannot do for them:
+2. **Run the bootstrap command** above. It handles everything automatically.
+3. **Help the human finish interactive logins** the script cannot do for them:
    - **Tailscale:** `sudo tailscale up` opens a browser to authenticate the machine onto the
      tailnet. Re-run the bootstrap command afterward.
-   - **Claude:** run `claude` once and log in with the account from step 2. No API key —
+   - **Claude:** run `claude` once and log in. No API key —
      the agents use the logged-in subscription directly.
-5. **Tag the account** if the script warned you to: add `meta { claude_account = "<acct>" }`
-   inside the `client { }` block of the Nomad config it points at, then restart Nomad.
-6. **Verify.** Run `~/monad/scripts/monad nomad nodes` — this machine should appear as
+4. **Verify.** Run `~/monad/scripts/monad nomad nodes` — this machine should appear as
    `ready`. That means you're in.
 
 ---
@@ -78,9 +68,8 @@ only task is to make this machine a healthy node.
 The bootstrap script is bash-only. On Windows, follow the root
 [`CLAUDE.md` → Adding a New Node → Windows](./CLAUDE.md#adding-a-new-node) section:
 install Nomad via scoop, drop in `cluster/client-windows.hcl` with this machine's Tailscale
-IP and `meta.claude_account`, install the Claude CLI, run `claude` to log in, and register
-the node-doctor scheduled task. The destination state is identical to the bash path; only the
-installer differs.
+IP, install the Claude CLI, run `claude` to log in, and register the node-doctor scheduled
+task. The destination state is identical to the bash path; only the installer differs.
 
 ---
 
@@ -88,11 +77,10 @@ installer differs.
 
 - **No Tailscale IP yet** → the human hasn't authenticated the machine onto the tailnet.
   Have them run `sudo tailscale up`, complete the browser login, then re-run the bootstrap.
-- **Node not showing as `ready`** → check `nomad node status`; confirm this machine can reach
-  `<SERVER_IP>:4646` over Tailscale (`ping <SERVER_IP>`).
+- **Node not showing as `ready`** → check `nomad node status`; the script auto-discovers
+  servers, but verify Tailscale connectivity to other nodes.
 - **Jobs never land here** → the `meta.claude_account` tag is missing or Nomad wasn't
-  restarted after setting it. Account-pinned jobs only schedule onto a node with a matching
-  tag.
+  restarted after setting it.
 - **Anything else** → open a GitHub issue: `~/monad/scripts/monad gh issue "join failed on <hostname>" "<what happened>"`.
 
-That's the whole job. One command, two logins, one verification. Welcome to the cluster.
+That's the whole job. One command, logins if needed, one verification. Welcome to the cluster.

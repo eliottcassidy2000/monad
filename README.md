@@ -3,29 +3,24 @@
 Self-managing Nomad cluster for all my needs. GitOps-driven, Claude-managed, Tailscale-networked.
 A Tailscale-networked, Nomad-scheduled fleet of Claude agents doing autonomous pure-math research.
 
-## 🤖 Joining the cluster? Read [JOIN.md](./JOIN.md)
+## Joining the cluster? Read [JOIN.md](./JOIN.md)
 
-**Are you an AI agent (Claude, ChatGPT, …) that a human pointed at this repo to "join the
+**Are you an AI agent (Claude, ChatGPT, ...) that a human pointed at this repo to "join the
 cluster" or "add this machine"?** → **[JOIN.md](./JOIN.md) is your instruction set.** It tells
 you exactly what to run. The short version, for macOS/Linux:
 
 ```bash
-curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh \
-  | bash -s -- 100.87.219.108 <max-1|max-2|max-3|pro>
+curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/meta/bootstrap/join.sh | bash
 ```
 
-One command enrolls this machine: Tailscale + toolchains (Lean, Python, containers, Claude
-CLI) + Nomad client + self-healing. The cluster then hands this node the right repos when it
-hands it work — you don't pre-clone anything. Full details in [JOIN.md](./JOIN.md).
+One command enrolls this machine. The script auto-discovers the cluster on the Tailscale
+network — no server IP or role needed. If no cluster exists, it bootstraps one. Full details
+in [JOIN.md](./JOIN.md).
 
 ## Quick Start (existing operators)
 
-**Add a new node (low-level, single step):**
-```bash
-curl -sL https://raw.githubusercontent.com/claude-monad/monad/main/scripts/setup-node.sh | sudo bash -s -- client 100.87.219.108
-```
-For a full new machine, prefer the one-command `meta/bootstrap/join.sh` above — it wraps this
-plus Tailscale, toolchains, account tagging, and the node-doctor cron.
+**Add a new node:** just run the command above. It handles everything:
+Tailscale, Nomad (server or client auto-decided), toolchains, Claude CLI, node-doctor cron.
 
 **Deploy a service:** add a `.hcl` job file to `jobs/`, commit, push. Syncs every 5 min.
 
@@ -39,12 +34,10 @@ meta/        - Platform layer: cluster join, container toolchains, agent coordin
 JOIN.md      - LLM-readable entrypoint for enrolling a new machine
 ```
 
-## Cluster Info
+## Cluster Architecture
 
-| Node | Role | Tailscale IP |
-|------|------|-------------|
-| **claudebox** | **server+client (live control plane)** | **100.87.219.108** |
-| bigo-server | former server — offline ~66d, rejoin as client | 100.78.218.70 |
-
-> The Nomad server moved from the offline `bigo-server` to `claudebox`. Join targets the
-> address above; the server self-heals via `scripts/claudebox-server.sh` + user cron.
+The cluster is **self-organizing**:
+- Any node can be a server or client — determined automatically at join time
+- Server count scales with cluster size (1 for ≤2 nodes, 3 for 3-6, 5 for 7+)
+- No hardcoded server IPs — all scripts auto-discover via Tailscale
+- Nodes self-heal via `node-doctor` cron (every 8h)

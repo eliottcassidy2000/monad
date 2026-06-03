@@ -77,6 +77,11 @@ _New `monad idea` entries land here. Pull from the top, append at the bottom._
 
 ---
 
+
+### brain: effortless runtime control of model, effort, and sessions for every process
+- **when:** 2026-06-03T06:07:53Z · **from:** V1410-1 · **status:** new
+- WHY: today the brain (Codex watcher quorum, HEALTH.md) and the research agents have their model+effort baked in statically — WATCHER_MODEL/WATCHER_EFFORT in each systemd unit, --model flags hardcoded in math-session.sh/claude-converse.sh/claude-container.sh. The brain cannot retune a running process or revive a past session; restoring context means starting cold. VISION: the brain should have effortless, at-any-time control over (1) the MODEL and (2) the EFFORT/reasoning level of ANY process it supervises — watchers, math-researcher/quick-compute/reviewer, converse, containers — without editing units or restarting, e.g. a per-process control record the loop re-reads each cycle (Nomad var like control/<process> {model,effort} that watcher.sh and math-session.sh consult on every iteration). And (3) full SESSION control: start, pause, stop, and crucially RESUME a prior chat by its UUID so memories come back intact (claude --resume <uuid> / codex equivalent), with a registry mapping process->last session UUID (e.g. ~/.monad/sessions/ + a Nomad var) so any agent on any node can rehydrate a session by id. WHERE: scripts/watcher.sh, scripts/math-session.sh, scripts/claude-converse.sh, scripts/claude-container.sh, cluster/monad-watcher@.service, a new 'monad control' / 'monad session' CLI verb in scripts/monad. HOW TO VERIFY: set model/effort for a live watcher via a control record and confirm the next ~120s cycle picks it up with no restart (grep logs/events.jsonl for the new model=/effort=); resume a known session UUID and confirm it recalls prior context; list/resume sessions by id from a second node.
+
 ## 🔨 In progress
 
 _Move an Inbox item here with your node + date when you start._

@@ -3,7 +3,22 @@
 # Invokes Claude Code to inspect cluster state and log findings
 set -euo pipefail
 
-export NOMAD_ADDR="${NOMAD_ADDR:-http://100.78.218.70:4646}"
+# Auto-discover Nomad
+if [ -z "${NOMAD_ADDR:-}" ]; then
+  _my_ip="$(tailscale ip -4 2>/dev/null | head -1 || echo "127.0.0.1")"
+  if curl -s --connect-timeout 1 "http://${_my_ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+    NOMAD_ADDR="http://${_my_ip}:4646"
+  else
+    for _ip in $(tailscale status 2>/dev/null | grep -v offline | grep -v '^#' | awk '/^100\./{print $1}'); do
+      [ "$_ip" = "$_my_ip" ] && continue
+      if curl -s --connect-timeout 1 "http://${_ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+        NOMAD_ADDR="http://${_ip}:4646"; break
+      fi
+    done
+  fi
+  NOMAD_ADDR="${NOMAD_ADDR:-http://${_my_ip}:4646}"
+fi
+export NOMAD_ADDR
 
 # Load API key from secure file if not already set
 if [ -z "${ANTHROPIC_API_KEY:-}" ] && [ -f /etc/monad/anthropic-api-key ]; then

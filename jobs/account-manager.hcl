@@ -44,7 +44,7 @@ EOT
 
       env {
         ACCOUNT_MANAGER_PORT = "${NOMAD_PORT_http}"
-        NOMAD_ADDR           = "http://100.87.219.108:4646"
+        NOMAD_ADDR           = "http://${attr.unique.network.ip-address}:4646"
         HOME                 = "/root"
       }
 
@@ -84,7 +84,7 @@ EOT
 
       env {
         ACCOUNT_MANAGER_PORT = "${NOMAD_PORT_http}"
-        NOMAD_ADDR           = "http://100.87.219.108:4646"
+        NOMAD_ADDR           = "http://${attr.unique.network.ip-address}:4646"
       }
 
       resources {

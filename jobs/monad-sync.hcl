@@ -29,7 +29,7 @@ job "monad-sync" {
       }
 
       env {
-        NOMAD_ADDR     = "http://100.87.219.108:4646"
+        NOMAD_ADDR     = "http://${attr.unique.network.ip-address}:4646"
         MONAD_REPO_DIR = "/home/bigo/Documents/monad"
       }
 
