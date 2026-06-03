@@ -1,22 +1,27 @@
 # cluster-conductor — always-on supervisory LLM for the fleet.
 #
-# Re-homed from oraclebox1 to V1410-1 (the permanent, always-on leader) on
-# 2026-06-03. The original deployment was pinned to oraclebox1 with host paths
-# under /home/ubuntu; when that cloud node went down the conductor could not be
-# placed anywhere, and the watcher self-heal loop's `nomad job restart` was a
-# no-op (no allocation existed to restart). Pinning to the always-on leader
-# removes that single point of failure. Host paths are V1410-1's (/home/e),
-# mapped to the container's expected /home/ubuntu locations.
+# IMPORTANT — single point of failure by image architecture:
+#   The image ghcr.io/eliott-monad/monad-conductor:latest is built ARM64-only
+#   (oraclebox1 is an Oracle Cloud Ampere / arm64 box). The only up arm64 node
+#   besides oraclebox1 is eliotts-mac-mini, which is macOS and cannot run a
+#   Linux container. Every other up node (V1410-1, claudebox, death-star,
+#   bigo-server, windesk) is amd64 and gives `exec format error` on this image.
+#   => Today this job can ONLY run on oraclebox1. While oraclebox1 is down it
+#      cannot be placed anywhere; `nomad job restart` is a no-op (no alloc) and
+#      the watcher self-heal loop cannot recover it.
+#
+# To make the conductor portable (run on the always-on leader V1410-1), the
+# image must be published multi-arch (amd64+arm64) — see BACKLOG / monad idea.
+# Until then this stays pinned to oraclebox1, and `reschedule { unlimited }`
+# means the conductor auto-recovers the instant oraclebox1 rejoins the cluster.
 job "cluster-conductor" {
   datacenters = ["dc1"]
   type        = "service"
   priority    = 50
 
-  # Run on the permanent always-on leader so the conductor is never orphaned by
-  # an intermittent node going down.
   constraint {
     attribute = "${node.unique.name}"
-    value     = "V1410-1"
+    value     = "oraclebox1"
   }
 
   group "conductor" {
@@ -38,6 +43,8 @@ job "cluster-conductor" {
       mode     = "delay"
     }
 
+    # Unlimited reschedule => when oraclebox1 returns, the conductor is placed
+    # automatically without any operator action.
     reschedule {
       delay          = "30s"
       delay_function = "exponential"
@@ -75,12 +82,11 @@ job "cluster-conductor" {
           password = "${GHCR_TOKEN}"
         }
 
-        # host:container — host paths are V1410-1's; container paths are what the
-        # conductor image expects (it runs as the `ubuntu` user internally).
+        # Host paths are oraclebox1's (user `ubuntu`).
         volumes = [
-          "/home/e/.claude:/home/ubuntu/.claude",
-          "/home/e/.claude.json:/home/ubuntu/.claude.json",
-          "/home/e/monad:/work",
+          "/home/ubuntu/.claude:/home/ubuntu/.claude",
+          "/home/ubuntu/.claude.json:/home/ubuntu/.claude.json",
+          "/home/ubuntu/monad:/work",
           "/var/run/tailscale:/var/run/tailscale",
           "/usr/bin/nomad:/host/bin/nomad:ro",
           "/usr/bin/tailscale:/host/bin/tailscale:ro",
@@ -92,8 +98,7 @@ job "cluster-conductor" {
         CONDUCTOR_PORT    = "8200"
         CONDUCTOR_WORKDIR = "/work"
         MONAD_REPO_DIR    = "/work"
-        # Point at this node's local Nomad (host networking).
-        NOMAD_ADDR = "http://100.75.75.39:4646"
+        NOMAD_ADDR        = "http://100.125.210.126:4646"
       }
 
       template {
