@@ -40,8 +40,9 @@ else
 fi
 
 # ── Distill ─────────────────────────────────────────────────────────────────
-c_result="$(printf '%s\n' "$CLAUDE_OUT" | grep -m1 -i '^RESULT:' || echo 'RESULT: (no RESULT line emitted)')"
-x_result="$(printf '%s\n' "$CODEX_OUT" | grep -m1 -i '^RESULT:' || echo 'RESULT: (no RESULT line emitted)')"
+# Take the LAST RESULT line and skip the echoed-prompt placeholder (codex echoes the prompt).
+c_result="$(printf '%s\n' "$CLAUDE_OUT" | grep -i '^RESULT:' | grep -vF 'one-sentence statement' | tail -1)"; [ -n "$c_result" ] || c_result='RESULT: (no RESULT line emitted)'
+x_result="$(printf '%s\n' "$CODEX_OUT" | grep -i '^RESULT:' | grep -vF 'one-sentence statement' | tail -1)"; [ -n "$x_result" ] || x_result='RESULT: (no RESULT line emitted)'
 c_status=$([ "$c_rc" -eq 0 ] && echo ok || echo "fail(rc=$c_rc)")
 x_status=$([ "$x_rc" -eq 0 ] && echo ok || echo "fail(rc=$x_rc)")
 overall=$([ "$c_rc" -eq 0 ] && [ "$x_rc" -eq 0 ] && echo both_ok || { [ "$c_rc" -ne 0 ] && [ "$x_rc" -ne 0 ] && echo both_fail || echo partial; })
