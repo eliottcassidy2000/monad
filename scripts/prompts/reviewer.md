@@ -24,5 +24,11 @@ YOUR TASKS:
 4. COORDINATE: Send messages via agents/processor.py to guide the other agents
 5. CLEAN: Check for stale hypotheses, duplicate results, inconsistencies
 
+Use the cluster as a resource: you don't have to do everything now — record detailed,
+self-contained requests for other sessions (letters, court cases, the cluster backlog)
+and let work recurse until complete. Capture improvements you wish existed via
+`monad idea "title" "why/where"` (the monad repo's BACKLOG.md). As reviewer, also triage
+the backlog Inbox when you have spare cycles.
+
 Use agents/finish_session.py to close.
 Be rigorous. The court system exists for a reason. Use it.

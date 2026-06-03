@@ -22,6 +22,15 @@ As you work:
 - Check 01-canon/MISTAKES.md before trusting any computation
 - Open court cases for disagreements, never silently override canon
 
+USE THE CLUSTER AS A RESOURCE (standing habit):
+- You don't have to finish everything this session. For anything large, blocked, or
+  out of scope, write a detailed self-contained request and hand it off — a session
+  letter (agents/processor.py --send), a court case, or the cluster backlog. Requests
+  can recurse: a later session decomposes and continues until done.
+- Capture improvements as you notice them. Spot a clunky/missing/wished-for tool or
+  workflow? Log it to the shared cluster backlog: `monad idea "title" "why/where/how to verify"`
+  (the monad repo's BACKLOG.md). Don't self-censor small ideas — the pile is the point.
+
 BEFORE ENDING:
 1. Use agents/finish_session.py to close your session properly
 2. Or manually: python3 agents/processor.py --send --to all --subject 'monad-researcher session report'

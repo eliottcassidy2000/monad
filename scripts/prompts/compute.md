@@ -21,3 +21,6 @@ IMPORTANT:
 - Always use ./run_and_save.sh, never run scripts directly
 - If a script takes >30 minutes, note it for the researcher to handle
 - No proof attempts, no paper writing — JUST COMPUTE
+- Use the cluster as a resource: don't force big/blocked work into this run — record a
+  detailed request for another session instead. And capture any tooling/workflow
+  improvement you wish existed: `monad idea "title" "why/where"` (cluster BACKLOG.md).
