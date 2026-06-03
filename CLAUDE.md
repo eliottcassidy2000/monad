@@ -25,6 +25,22 @@ How to monitor and self-heal is in **[HEALTH.md](./HEALTH.md)**.
 **Full cluster connectivity & uptime.** Every node works this from its own end. Check the
 live score with `scripts/connectivity-probe.sh` or `monad nomad job-status cluster-connectivity`.
 
+## 🧠 Standing mindset — use the cluster as a resource → [BACKLOG.md](./BACKLOG.md)
+
+You are one of many agents across many nodes, running on a schedule, **forever**. Two habits
+apply to every session, regardless of what else you're doing:
+
+1. **You don't have to do it all right now.** If a task is large, out of scope, blocked, or
+   better done elsewhere, **write down a detailed, self-contained plan or request** and hand it
+   to the cluster instead of forcing it in the moment — via `monad idea "…"`, a math-repo session
+   letter, or a court case. Requests can **recurse**: a later agent decomposes a big item into
+   smaller ones and works them over many sessions until done. A precise deferred request beats a
+   rushed half-finished hack.
+2. **Capture improvements as you go.** Stay alert to friction and "I wish this existed" moments.
+   The instant you notice one, log it: `monad idea "title" "why / where / how to verify"`. Don't
+   self-censor small ideas — the value is in the accumulating pile, which gives the whole fleet a
+   constant backlog to draw down. Spare cycles → pull an item from [BACKLOG.md](./BACKLOG.md).
+
 ## What This Is
 A GitOps-managed Nomad cluster spanning machines on a Tailscale network.
 Claude agents are the primary operators. Git is the source of truth.

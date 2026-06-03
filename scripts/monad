@@ -16,7 +16,21 @@ if [ ! -d "$REPO_DIR/.git" ]; then
     fi
 fi
 
-NOMAD_ADDR="${NOMAD_ADDR:-http://100.87.219.108:4646}"
+# Auto-discover Nomad: try local node first, then scan tailnet peers
+if [ -z "${NOMAD_ADDR:-}" ]; then
+  _my_ip="$(tailscale ip -4 2>/dev/null | head -1 || echo "127.0.0.1")"
+  if curl -s --connect-timeout 1 "http://${_my_ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+    NOMAD_ADDR="http://${_my_ip}:4646"
+  else
+    for _ip in $(tailscale status 2>/dev/null | grep -v offline | grep -v '^#' | awk '/^100\./{print $1}'); do
+      [ "$_ip" = "$_my_ip" ] && continue
+      if curl -s --connect-timeout 1 "http://${_ip}:4646/v1/status/leader" >/dev/null 2>&1; then
+        NOMAD_ADDR="http://${_ip}:4646"; break
+      fi
+    done
+  fi
+  NOMAD_ADDR="${NOMAD_ADDR:-http://${_my_ip}:4646}"
+fi
 export NOMAD_ADDR
 
 RED='\033[0;31m'
@@ -90,6 +104,10 @@ Memory (shared cluster state):
 
 Events:
   monad events [n]                  Show last n cluster events (default 20)
+
+Backlog (shared cluster idea/improvement repository — see BACKLOG.md):
+  monad idea "title" [details...]   Capture an improvement idea to the backlog
+  monad idea list                   List open backlog ideas
 
 GitHub:
   monad gh issue <title> [body]     Create a GitHub issue
@@ -519,6 +537,53 @@ cmd_events() {
     done
 }
 
+# ─── Backlog (shared cluster idea repository) ──────────────────────────────
+
+BACKLOG_FILE="$REPO_DIR/BACKLOG.md"
+
+INBOX_MARKER='## 📥 Inbox'
+PROGRESS_MARKER='## 🔨 In progress'
+
+cmd_idea() {
+    local sub="${1:-}"
+    case "$sub" in
+        list|ls)
+            if [ ! -f "$BACKLOG_FILE" ]; then echo "No backlog yet (BACKLOG.md missing)."; return; fi
+            echo "── Open backlog ideas (Inbox + In progress) ───────────────────"
+            # Only list entry headings inside the Inbox / In progress region,
+            # not the prose section headings above it.
+            awk -v inbox="$INBOX_MARKER" '
+                index($0, inbox) { on=1 }
+                on && /^### / { printf "  L%d  %s\n", NR, substr($0,5) }
+            ' "$BACKLOG_FILE"
+            return ;;
+        ""|-h|--help)
+            echo "usage: monad idea \"short title\" [details...]   capture an idea"
+            echo "       monad idea list                          list open ideas"
+            return ;;
+    esac
+    local title="$1"; shift
+    local details="$*"
+    mkdir -p "$(dirname "$BACKLOG_FILE")"
+    local entry
+    entry=$(printf '\n### %s\n- **when:** %s · **from:** %s · **status:** new\n' \
+        "$title" "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$(hostname)")
+    [ -n "$details" ] && entry=$(printf '%s\n- %s' "$entry" "$details")
+    # Insert just before the "In progress" marker so the idea lands in Inbox.
+    # Fall back to appending at EOF if the marker isn't present.
+    if [ -f "$BACKLOG_FILE" ] && grep -qF "$PROGRESS_MARKER" "$BACKLOG_FILE"; then
+        awk -v marker="$PROGRESS_MARKER" -v entry="$entry" '
+            index($0, marker) && !done { print entry; print ""; done=1 }
+            { print }
+        ' "$BACKLOG_FILE" > "$BACKLOG_FILE.tmp" && mv "$BACKLOG_FILE.tmp" "$BACKLOG_FILE"
+    else
+        printf '%s\n' "$entry" >> "$BACKLOG_FILE"
+    fi
+    emit_event "backlog" "idea" "ok" "$title"
+    echo "Logged to BACKLOG.md: $title"
+    echo "Commit it so the fleet sees it:  monad git commit \"backlog: $title\""
+}
+
 # ─── Secrets management ───────────────────────────────────────────────────
 
 cmd_secrets() {
@@ -779,6 +844,7 @@ main() {
         memory)           "$REPO_DIR/scripts/cluster-memory.sh" "$@" ;;
         secrets)          cmd_secrets "$@" ;;
         events)           cmd_events "$@" ;;
+        idea|backlog)     cmd_idea "$@" ;;
         gh)               cmd_gh "$@" ;;
         help|--help|-h|"")usage ;;
         *)
